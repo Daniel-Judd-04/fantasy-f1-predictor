@@ -1,6 +1,7 @@
 package com.danieljudd.formula1.fantasyf1predictor.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +20,9 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "id")
 public class Team {
 
   @Id
@@ -34,7 +38,6 @@ public class Team {
   private String country;
 
   @OneToMany(mappedBy = "team")
-  @JsonManagedReference
   private List<Driver> drivers;
 
   /**
