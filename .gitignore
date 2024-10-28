@@ -222,3 +222,11 @@ Thumbs.db
 
 # Sensitive configuration
 src/main/resources/application.properties
+
+### Vuejs ###
+# Recommended template: Node.gitignore
+
+node_modules/
+dist/
+npm-debug.log
+yarn-error.log
