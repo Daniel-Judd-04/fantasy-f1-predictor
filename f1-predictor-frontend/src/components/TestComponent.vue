@@ -20,27 +20,27 @@ export default {
   },
   data() {
     return {
-      driver: {}
+      driver: {team: {}}
     };
   },
   methods: {
-      async fetchDriverInfo() {
-        if (!this.driverCode) return;
-        try {
-          const response = await fetch(`http://localhost:8081/api/drivers/${this.driverCode}`);
-          if (!response.ok) throw new Error("Failed to fetch driver info");
-          this.driver = await response.json();
-        } catch (error) {
-          console.error(error);
-        }
+    async fetchDriverInfo() {
+      if (!this.driverCode) return;
+      try {
+        const response = await fetch(`http://localhost:8081/api/drivers/${this.driverCode}`);
+        if (!response.ok) throw new Error("Failed to fetch driver info");
+        this.driver = await response.json();
+      } catch (error) {
+        console.error(error);
       }
+    }
   },
 };
 </script>
 
 <template>
-  <div>
-    <h2>Driver {{ driver.number }}:</h2>
+  <div :class="['tw-mb-1', 'tw-text-f1-black', `tw-bg-team-${driver.team.shortName}`]">
+    <h2>Driver for {{ driver.team.shortName }}:</h2>
     <div>
       <p>{{ driver.shortName }}</p>
       <p>{{ driver.name }}</p>
