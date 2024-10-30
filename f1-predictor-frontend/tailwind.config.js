@@ -7,7 +7,7 @@ module.exports = {
     ],
     safelist: [
         {
-            pattern: /^tw-bg-team-/
+            pattern: /-team-/
         },
     ],
     theme: {
@@ -36,6 +36,7 @@ module.exports = {
                 f1: {
                     red: '#FF1E00',
                     black: '#15151E',
+                    white: '#FFFFFF',
                 },
             }
         },

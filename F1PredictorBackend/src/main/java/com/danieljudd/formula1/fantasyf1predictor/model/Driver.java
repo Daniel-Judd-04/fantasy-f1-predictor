@@ -35,7 +35,7 @@ public class Driver {
   private String shortName;
 
   private String name;
-  private String nationality;
+  private String country;
   @Column(unique = true)
   private int number;
 
@@ -46,16 +46,16 @@ public class Driver {
   /**
    * Constructor for Driver
    *
-   * @param shortName   Unique 3 letter identifier
-   * @param name        Full name of the driver
-   * @param nationality Country of origin
-   * @param number      Car number
-   * @param team        Team of the driver
+   * @param shortName Unique 3 letter identifier
+   * @param name      Full name of the driver
+   * @param country   Country of origin
+   * @param number    Car number
+   * @param team      Team of the driver
    */
-  public Driver(String shortName, String name, String nationality, int number, Team team) {
+  public Driver(String shortName, String name, String country, int number, Team team) {
     this.shortName = shortName;
     this.name = name;
-    this.nationality = nationality;
+    this.country = country;
     this.number = number;
     this.team = team;
   }

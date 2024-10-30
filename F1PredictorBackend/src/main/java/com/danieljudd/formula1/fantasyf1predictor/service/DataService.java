@@ -1,7 +1,11 @@
 package com.danieljudd.formula1.fantasyf1predictor.service;
 
+import com.danieljudd.formula1.fantasyf1predictor.model.Circuit;
+import com.danieljudd.formula1.fantasyf1predictor.repository.CircuitRepository;
 import com.danieljudd.formula1.fantasyf1predictor.repository.DriverRepository;
 import com.danieljudd.formula1.fantasyf1predictor.repository.TeamRepository;
+import jakarta.annotation.PostConstruct;
+import java.time.Instant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +18,21 @@ public class DataService {
   @Autowired
   private DriverRepository driverRepository;
 
-  //  @PostConstruct
+  @Autowired
+  private CircuitRepository circuitRepository;
+
+  @PostConstruct
   public void createTeamAndDrivers() {
+    try {
+      Circuit circuit = new Circuit(1,
+          Instant.parse("2024-03-02T12:00:00Z"), "+02:00", "Bahrain Grand Prix",
+          "Bahrain",
+          "Bahrain", false);
+
+      circuitRepository.save(circuit);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 //    try {
 //      // Create a team
 //      Team RBR = new Team("RBR", "Red Bull Racing", "Austria");
