@@ -7,7 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.Instant;
+import java.math.BigDecimal;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,46 +19,47 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonIdentityInfo(
     generator = ObjectIdGenerators.PropertyGenerator.class,
-    property = "id")
+    property = "circuitId")
 public class Circuit {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private int circuitId;
+
 
   @Column(unique = true)
-  private int round;
-
-  @Column(unique = true)
-  private Instant date;
-  private String timezone;
-
   private String fullName;
   private String locationName;
   private String country;
 
-  private boolean isSprint;
+  private String timezone;
+
+  private BigDecimal length;
+  private byte corners;
+  private byte laps;
+  private byte drsZones;
 
   /**
    * Constructor for Circuit
    *
-   * @param round        The nth race of the season
-   * @param date         The date of the race (UTC)
-   * @param timezone     The timezone offset of the race
-   * @param fullName     The official name of the race
-   * @param locationName The given name for the location of the race
-   * @param country      The country for the race
-   * @param isSprint     Whether the race is a sprint
+   * @param fullName     Full name of the circuit
+   * @param locationName Location name of the circuit
+   * @param country      Country of the circuit
+   * @param timezone     Timezone of the circuit
+   * @param length       Length of a lap of the circuit
+   * @param corners      Number of corners
+   * @param laps         Number of laps
+   * @param drsZones     Number of DRS zones
    */
-  public Circuit(int round, Instant date, String timezone, String fullName, String locationName,
-      String country,
-      boolean isSprint) {
-    this.round = round;
-    this.date = date;
-    this.timezone = timezone;
+  public Circuit(String fullName, String locationName, String country, String timezone,
+      BigDecimal length, byte corners, byte laps, byte drsZones) {
     this.fullName = fullName;
     this.locationName = locationName;
     this.country = country;
-    this.isSprint = isSprint;
+    this.timezone = timezone;
+    this.length = length;
+    this.corners = corners;
+    this.laps = laps;
+    this.drsZones = drsZones;
   }
 }
