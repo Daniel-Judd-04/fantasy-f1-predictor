@@ -2,10 +2,10 @@ package com.danieljudd.formula1.fantasyf1predictor.service;
 
 import com.danieljudd.formula1.fantasyf1predictor.model.Circuit;
 import com.danieljudd.formula1.fantasyf1predictor.repository.CircuitRepository;
+import com.danieljudd.formula1.fantasyf1predictor.repository.ConstructorRepository;
 import com.danieljudd.formula1.fantasyf1predictor.repository.DriverRepository;
-import com.danieljudd.formula1.fantasyf1predictor.repository.TeamRepository;
 import jakarta.annotation.PostConstruct;
-import java.time.Instant;
+import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class DataService {
 
   @Autowired
-  private TeamRepository teamRepository;
+  private ConstructorRepository constructorRepository;
 
   @Autowired
   private DriverRepository driverRepository;
@@ -24,14 +24,13 @@ public class DataService {
   @PostConstruct
   public void createTeamAndDrivers() {
     try {
-      Circuit circuit = new Circuit(1,
-          Instant.parse("2024-03-02T12:00:00Z"), "+02:00", "Bahrain Grand Prix",
-          "Bahrain",
-          "Bahrain", false);
+      Circuit circuit1 = new Circuit("Albert Park", "Melbourne", "Australia", "AEDT",
+          new BigDecimal("5.303"),
+          (byte) 16, (byte) 58, (byte) 2);
 
-      circuitRepository.save(circuit);
+      circuitRepository.save(circuit1);
     } catch (Exception e) {
-      e.printStackTrace();
+      System.out.println("\nObject(s) already exist in database:\n" + e.getMessage());
     }
 //    try {
 //      // Create a team
