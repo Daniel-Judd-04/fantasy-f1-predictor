@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TeamRepository extends JpaRepository<Constructor, Long> {
+public interface ConstructorRepository extends JpaRepository<Constructor, Long> {
 
   // Find teams by nationality
   List<Constructor> findByCountry(String country);

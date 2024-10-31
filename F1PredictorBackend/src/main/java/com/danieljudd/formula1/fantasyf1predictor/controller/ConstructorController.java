@@ -1,7 +1,7 @@
 package com.danieljudd.formula1.fantasyf1predictor.controller;
 
 import com.danieljudd.formula1.fantasyf1predictor.model.Constructor;
-import com.danieljudd.formula1.fantasyf1predictor.repository.TeamRepository;
+import com.danieljudd.formula1.fantasyf1predictor.repository.ConstructorRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,29 +10,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/teams")
-public class TeamController {
+@RequestMapping("/api/constructors")
+public class ConstructorController {
 
   @Autowired
-  private TeamRepository teamRepository;
+  private ConstructorRepository constructorRepository;
 
   @GetMapping
-  public List<Constructor> getAllTeams() {
-    return teamRepository.findAll();
+  public List<Constructor> getAllConstructors() {
+    return constructorRepository.findAll();
   }
 
   @GetMapping("/size")
-  public long getTeamCount() {
-    return teamRepository.count();
+  public long getConstructorCount() {
+    return constructorRepository.count();
   }
 
   @GetMapping("/id={id}")
-  public Constructor getTeamById(@PathVariable Long id) {
-    return teamRepository.findById(id).orElse(null);
+  public Constructor getConstructorById(@PathVariable Long id) {
+    return constructorRepository.findById(id).orElse(null);
   }
 
   @GetMapping("/shortName={shortName}")
-  public Constructor getTeamByShortName(@PathVariable String shortName) {
-    return teamRepository.findByShortName(shortName.toUpperCase());
+  public Constructor getConstructorByShortName(@PathVariable String shortName) {
+    return constructorRepository.findByShortName(shortName.toUpperCase());
   }
 }
