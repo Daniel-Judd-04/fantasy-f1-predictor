@@ -29,6 +29,12 @@
 
   <!-- Dependencies -->
   <dependencies>
+    <dependency>
+      <groupId>org.liquibase</groupId>
+      <artifactId>liquibase-core</artifactId>
+      <version>4.29.2</version> <!-- Use the latest stable version -->
+    </dependency>
+
     <!-- Spring Boot Starter Validation -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

@@ -1,0 +1,316 @@
+databaseChangeLog:
+  #  - constructor table
+  - changeSet:
+      id: 1
+      author: Daniel_Judd
+      changes:
+        - createTable:
+            tableName: constructor
+            columns:
+              - column:
+                  name: constructor_id
+                  type: INT UNSIGNED AUTO_INCREMENT
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: short_name
+                  type: CHAR(3)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: full_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: country
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: fantasy_points
+                  type: INT
+                  defaultValueNumeric: '0'
+              - column:
+                  name: fantasy_price
+                  type: DECIMAL(4,1) # 3 digits, 1 decimal place (e.g., 10.5, 999.9)
+                  defaultValueNumeric: '0.0'
+  #  - driver table
+  - changeSet:
+      id: 2
+      author: Daniel_Judd
+      changes:
+        - createTable:
+            tableName: driver
+            columns:
+              - column:
+                  name: driver_id
+                  type: INT UNSIGNED AUTO_INCREMENT
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: constructor_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: short_name
+                  type: CHAR(3)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: full_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: car_number
+                  type: TINYINT UNSIGNED # 0-255
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: country
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: points
+                  type: DECIMAL(6,2) UNSIGNED # 6 digits, 2 decimal places (e.g., 230.50, 999.99)
+                  defaultValueNumeric: '0'
+              - column:
+                  name: fantasy_points
+                  type: INT
+                  defaultValueNumeric: '0'
+              - column:
+                  name: fantasy_price
+                  type: DECIMAL(4,1) # 3 digits, 1 decimal place (e.g., 10.5, 999.9)
+                  defaultValueNumeric: '0.0'
+        - addForeignKeyConstraint:
+            baseTableName: driver
+            baseColumnNames: constructor_id
+            constraintName: fk_driver_constructor
+            referencedTableName: constructor
+            referencedColumnNames: constructor_id
+            onDelete: CASCADE
+  #  - circuit table
+  - changeSet:
+      id: 4
+      author: Daniel_Judd
+      changes:
+        - createTable:
+            tableName: circuit
+            columns:
+              - column:
+                  name: circuit_id
+                  type: INT UNSIGNED AUTO_INCREMENT
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: full_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: location_name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: country
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: timezone
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: length
+                  type: DECIMAL(6,3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: corners
+                  type: TINYINT UNSIGNED # 0-255
+                  constraints:
+                    nullable: false
+              - column:
+                  name: laps
+                  type: TINYINT UNSIGNED # 0-255
+                  constraints:
+                    nullable: false
+              - column:
+                  name: drs_zones
+                  type: TINYINT UNSIGNED # 0-255
+                  constraints:
+                    nullable: false
+  #  - grand_prix table
+  - changeSet:
+      id: 3
+      author: Daniel_Judd
+      changes:
+        - createTable:
+            tableName: grand_prix
+            columns:
+              - column:
+                  name: grand_prix_id
+                  type: INT UNSIGNED AUTO_INCREMENT
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: circuit_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: season
+                  type: SMALLINT UNSIGNED # 0-65535
+                  constraints:
+                    nullable: false
+              - column:
+                  name: round
+                  type: TINYINT UNSIGNED # 0-255
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_time
+                  type: TIMESTAMP # YYYY-MM-DD HH:MM:SS
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: sprint
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: air_temperature
+                  type: DECIMAL(5,2) # 5 digits, 2 decimal places (e.g., 30.50, 999.99)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: track_temperature
+                  type: DECIMAL(5,2) # 5 digits, 2 decimal places (e.g., 30.50, 999.99)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: humidity
+                  type: DECIMAL(5,2) # 5 digits, 2 decimal places (e.g., 30.50, 999.99)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: rainfall
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: wind_speed
+                  type: DECIMAL(5,2) # 5 digits, 2 decimal places (e.g., 30.50, 999.99)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: grand_prix
+            baseColumnNames: circuit_id
+            constraintName: fk_grand_prix_circuit
+            referencedTableName: circuit
+            referencedColumnNames: circuit_id
+            onDelete: CASCADE
+  #  - race_result table
+  - changeSet:
+      id: 5
+      author: Daniel_Judd
+      changes:
+        - createTable:
+            tableName: race_result
+            columns:
+              - column:
+                  name: driver_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: grand_prix_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: position
+                  type: TINYINT UNSIGNED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: fastest_lap
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: pit_stops
+                  type: TINYINT UNSIGNED
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: race_result
+            columnNames: driver_id, grand_prix_id
+            constraintName: pk_race_result
+        - addForeignKeyConstraint:
+            baseTableName: race_result
+            baseColumnNames: driver_id
+            constraintName: fk_race_result_driver
+            referencedTableName: driver
+            referencedColumnNames: driver_id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: race_result
+            baseColumnNames: grand_prix_id
+            constraintName: fk_race_result_grand_prix
+            referencedTableName: grand_prix
+            referencedColumnNames: grand_prix_id
+            onDelete: CASCADE
+  #  - qualifying_result table
+  - changeSet:
+      id: 6
+      author: Daniel_Judd
+      changes:
+        - createTable:
+            tableName: qualifying_result
+            columns:
+              - column:
+                  name: driver_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: grand_prix_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: position
+                  type: TINYINT UNSIGNED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: lap_time
+                  type: INT UNSIGNED # milliseconds
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: qualifying_result
+            columnNames: driver_id, grand_prix_id
+            constraintName: pk_qualifying_result
+        - addForeignKeyConstraint:
+            baseTableName: qualifying_result
+            baseColumnNames: driver_id
+            constraintName: fk_qualifying_result_driver
+            referencedTableName: driver
+            referencedColumnNames: driver_id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: qualifying_result
+            baseColumnNames: grand_prix_id
+            constraintName: fk_qualifying_result_grand_prix
+            referencedTableName: grand_prix
+            referencedColumnNames: grand_prix_id
+            onDelete: CASCADE
