@@ -1,6 +1,6 @@
 package com.danieljudd.formula1.fantasyf1predictor.controller;
 
-import com.danieljudd.formula1.fantasyf1predictor.model.Team;
+import com.danieljudd.formula1.fantasyf1predictor.model.Constructor;
 import com.danieljudd.formula1.fantasyf1predictor.repository.TeamRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class TeamController {
   private TeamRepository teamRepository;
 
   @GetMapping
-  public List<Team> getAllTeams() {
+  public List<Constructor> getAllTeams() {
     return teamRepository.findAll();
   }
 
@@ -27,12 +27,12 @@ public class TeamController {
   }
 
   @GetMapping("/id={id}")
-  public Team getTeamById(@PathVariable Long id) {
+  public Constructor getTeamById(@PathVariable Long id) {
     return teamRepository.findById(id).orElse(null);
   }
 
   @GetMapping("/shortName={shortName}")
-  public Team getTeamByShortName(@PathVariable String shortName) {
+  public Constructor getTeamByShortName(@PathVariable String shortName) {
     return teamRepository.findByShortName(shortName.toUpperCase());
   }
 }
