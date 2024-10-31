@@ -10,6 +10,8 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
   List<Driver> findByCountry(String country);
 
   Driver findByShortName(String shortName);
+
+  Driver findByCarNumber(byte carNumber);
 }
 
 
