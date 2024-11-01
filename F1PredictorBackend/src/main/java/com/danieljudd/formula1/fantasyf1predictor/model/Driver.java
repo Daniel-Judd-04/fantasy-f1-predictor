@@ -42,9 +42,9 @@ public class Driver {
   private String shortName;
 
   private String fullName;
+  private String country;
   @Column(unique = true)
   private byte carNumber;
-  private String country;
 
   @ManyToOne
   @JoinColumn(name = "constructor_id", nullable = false)
@@ -64,7 +64,7 @@ public class Driver {
    * @param country     the country of the driver
    * @param constructor the constructor of the driver
    */
-  public Driver(String shortName, String fullName, byte carNumber, String country,
+  public Driver(String shortName, String fullName, String country, byte carNumber,
       Constructor constructor) {
     this.shortName = shortName;
     this.fullName = fullName;

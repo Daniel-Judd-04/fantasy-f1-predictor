@@ -54,20 +54,13 @@ public class Constructor {
   /**
    * Constructor for Constructor
    *
-   * @param shortName     Unique 3 letter identifier
-   * @param fullName      Full name of the constructor
-   * @param country       Country of origin
-   * @param drivers       List of drivers in the constructor
-   * @param fantasyPoints Fantasy points
-   * @param fantasyPrice  Fantasy price
+   * @param shortName Unique 3 letter identifier
+   * @param fullName  Full name of the constructor
+   * @param country   Country of origin
    */
-  public Constructor(String shortName, String fullName, String country, List<Driver> drivers,
-      int fantasyPoints, BigDecimal fantasyPrice) {
+  public Constructor(String shortName, String fullName, String country) {
     this.shortName = shortName;
     this.fullName = fullName;
     this.country = country;
-    this.drivers = drivers;
-    this.fantasyPoints = fantasyPoints;
-    this.fantasyPrice = fantasyPrice;
   }
 }
