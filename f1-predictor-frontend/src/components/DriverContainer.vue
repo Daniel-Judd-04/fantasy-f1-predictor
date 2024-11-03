@@ -19,9 +19,9 @@ export default {
 
 <template>
   <div>
-    <div class="tw-flex tw-flex-row">
-      <div class="tw-p-4 tw-bg-primary">
-        <div>Drivers:</div>
+    <div class="tw-bg-primary">
+      <div>Drivers:</div>
+      <div class="tw-flex tw-flex-col tw-gap-2">
         <DriverDisplay v-for="driver in allDrivers" :key="driver.code" :driver="driver"
                        :flagURL="getFlagURL(driver.country)"/>
       </div>

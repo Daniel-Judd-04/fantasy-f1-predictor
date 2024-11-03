@@ -1,10 +1,11 @@
 <script>
 
+import {getConciseName, getConstructor} from "@/utils/common";
+
 export default {
   name: 'DriverDisplay',
   props: {
     driver: {
-      default: () => ({team: {}}),
       type: Object,
       required: true
     },
@@ -19,31 +20,61 @@ export default {
       required: false
     },
   },
+  methods: {
+    getConstructor,
+    getConciseName,
+  }
 };
 </script>
 
 <template>
   <div
-      :class="['tw-rounded', 'tw-mb-1', 'tw-text-f1-black', 'tw-bg-primary-light', `tw-border-team-${driver.team.shortName}`, 'tw-border-2']">
-    <div class="tw-flex tw-flex-row tw-gap-2 tw-items-center tw-font-medium tw-px-2 tw-text-left">
-      <div v-if="showFlag" class="flag-frame tw-my-1 tw-h-5 tw-align-middle tw-border-f1-black">
+      class="tw-w-56 tw-rounded tw-h-8 tw-text-white tw-bg-primary-dark tw-border-2 hover-parent"
+      :class="`tw-border-team-${getConstructor(driver.constructor).shortName}`">
+    <div class="tw-flex tw-flex-row tw-gap-2 tw-items-center tw-font-medium tw-px-1 tw-text-left">
+      <div v-if="showFlag" class="flag-frame tw-my-1 tw-h-5 tw-align-middle tw-border-f1-white tw-rounded">
         <img :src="flagURL" alt="Flag" class="flag-image"/>
       </div>
-      {{ driver.name.substring(0, 1) }}. {{ driver.name.substring(driver.name.split(' ')[0].length + 1) }}
+      <div>
+        {{ driver.fullName }}
+      </div>
+      <div class="tw-ml-auto tw-w-9 tw-h-5 tw-rounded tw-relative tw-cursor-pointer">
+        <div class="not-hover-child tw-text-right tw-absolute tw-w-full tw-h-full">
+          {{ driver.fantasyPoints }}
+        </div>
+        <div
+            class="hover-child tw-absolute tw-transition-opacity tw-opacity-0 tw-w-full tw-h-full tw-flex tw-items-center tw-justify-end ">
+          <span class="material-icons tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center">tune</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
+<style scoped>
+
+</style>
+
+
 <style>
+/* Custom hover styles */
+.hover-parent:hover .hover-child {
+  opacity: 1;
+}
+
+.hover-parent:hover .not-hover-child {
+  opacity: 0;
+}
+
 .flag-frame {
-  aspect-ratio: 16 / 9; /* Set the desired aspect ratio, e.g., 4:3 */
+  aspect-ratio: 4 / 3;
   overflow: hidden;
-  border: 1px solid; /* Optional border for visual consistency */
+  border: 1px solid;
 }
 
 .flag-image {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Ensures flags fill the frame without stretching */
+  object-fit: cover;
 }
 </style>
