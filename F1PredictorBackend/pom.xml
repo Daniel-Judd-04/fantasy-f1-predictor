@@ -35,6 +35,13 @@
       <version>4.29.2</version> <!-- Use the latest stable version -->
     </dependency>
 
+    <!-- Add to your pom.xml -->
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-ui</artifactId>
+      <version>1.6.14</version>
+    </dependency>
+
     <!-- Spring Boot Starter Validation -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -103,18 +110,6 @@
           <target>${java.version}</target>
           <encoding>${project.build.sourceEncoding}</encoding>
         </configuration>
-      </plugin>
-
-      <!-- Spring Boot Maven Plugin -->
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
-
-      <!-- Lombok Configuration (if using Lombok) -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
         <executions>
           <execution>
             <id>default-compile</id>
@@ -133,6 +128,12 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <!-- Spring Boot Maven Plugin -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
