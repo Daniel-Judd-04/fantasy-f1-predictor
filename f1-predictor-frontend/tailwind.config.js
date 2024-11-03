@@ -24,7 +24,7 @@ module.exports = {
                     RBR: '#3671C6',
                     MCL: '#F58020',
                     FER: '#F91536',
-                    MER: '#6CD3BF',
+                    MEC: '#6CD3BF',
                     AST: '#358C75',
                     VRB: '#6692FF',
                     HAA: '#B6BABD',
@@ -36,8 +36,14 @@ module.exports = {
                 f1: {
                     red: '#FF1E00',
                     black: '#15151E',
-                    white: '#FFFFFF',
+                    white: '#e7e1e1',
                 },
+            },
+            height: {
+                18: '4.5rem',
+            },
+            width: {
+                50: '12.5rem',
             }
         },
     },
