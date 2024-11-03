@@ -1,9 +1,11 @@
 <template>
-  <div id="app" class="tw-min-h-screen tw-bg-f1-black tw-flex tw-items-center tw-justify-center">
-    <div class="">
-      <div class="tw-flex tw-flex-row">
-        <DriverContainer/>
+  <div id="app" class="tw-min-h-screen tw-bg-f1-black">
+    <div class="tw-absolute tw-left-0">
+      <div class="tw-flex tw-flex-row tw-gap-4">
         <TeamContainer/>
+        <DriverContainer/>
+        <CircuitDisplay v-if="allCircuits[0] && allGrandsPrix[0]" :circuit="allCircuits[0]"
+                        :grand-prix="allGrandsPrix[0]"/>
       </div>
     </div>
   </div>
@@ -11,19 +13,26 @@
 
 <script>
 import DriverContainer from "@/components/DriverContainer.vue";
-import {mapActions} from "vuex";
-import TeamContainer from "@/components/TeamContainer.vue";
+import {mapActions, mapGetters} from "vuex";
+import TeamContainer from "@/components/ConstructorContainer.vue";
+import CircuitDisplay from "@/components/GrandPrixDisplay.vue";
 
 export default {
   name: 'App',
   created() {
     this.fetchDrivers();
-    this.fetchTeams();
+    this.fetchConstructors();
+    this.fetchCircuits();
+    this.fetchGrandsPrix();
   },
   methods: {
-    ...mapActions(['fetchDrivers', 'fetchTeams']),
+    ...mapActions(['fetchDrivers', 'fetchConstructors', 'fetchCircuits', 'fetchGrandsPrix']),
+  },
+  computed: {
+    ...mapGetters(['allCircuits', 'allGrandsPrix']),
   },
   components: {
+    CircuitDisplay,
     DriverContainer,
     TeamContainer,
   }
