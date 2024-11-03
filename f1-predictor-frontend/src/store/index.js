@@ -3,14 +3,22 @@ import {createStore} from 'vuex';
 export default createStore({
     state: {
         drivers: [],
-        teams: [],
+        constructors: [],
+        circuits: [],
+        grandsPrix: [],
     },
     mutations: {
         setDrivers(state, drivers) {
             state.drivers = drivers;
         },
-        setTeams(state, teams) {
-            state.teams = teams;
+        setConstructors(state, constructors) {
+            state.constructors = constructors;
+        },
+        setCircuits(state, circuits) {
+            state.circuits = circuits;
+        },
+        setGrandsPrix(state, grandsPrix) {
+            state.grandsPrix = grandsPrix;
         },
     },
     actions: {
@@ -18,74 +26,52 @@ export default createStore({
             try {
                 const response = await fetch(`http://localhost:8081/api/drivers`);
                 if (!response.ok) throw new Error("Failed to fetch drivers");
-                const tempDrivers = await response.json();
+                let drivers = await response.json();
 
-                // Process driver data here, as you've done in the previous setup
-                for (let i = 0; i < tempDrivers.length; i++) {
-                    if (typeof tempDrivers[i] === 'number') {
-                        const teammate = tempDrivers.find(
-                            driver => driver?.team?.drivers?.some(d => d.id === tempDrivers[i])
-                        );
+                // Sort drivers by points in descending order
+                drivers = drivers.sort((a, b) => b.fantasyPoints - a.fantasyPoints);
 
-                        if (teammate) {
-                            const fullDriverData = teammate.team.drivers.find(d => d.id === tempDrivers[i]);
-                            tempDrivers[i] = fullDriverData;
-
-                            if (typeof tempDrivers[i].team === 'number') {
-                                tempDrivers[i].team = teammate.team;
-                            }
-                        } else {
-                            const fallbackResponse = await fetch(`http://localhost:8081/api/drivers/id=${tempDrivers[i]}`);
-                            if (!fallbackResponse.ok) throw new Error("Failed to fetch driver info");
-                            tempDrivers[i] = await fallbackResponse.json();
-
-                            if (typeof tempDrivers[i].team === 'number') {
-                                const teamResponse = await fetch(`http://localhost:8081/api/teams/id=${tempDrivers[i].team}`);
-                                if (teamResponse.ok) {
-                                    tempDrivers[i].team = await teamResponse.json();
-                                }
-                            }
-                        }
-
-                        for (let j = 0; j < tempDrivers[i].team.drivers.length; j++) {
-                            if (typeof tempDrivers[i].team.drivers[j] !== 'number') {
-                                tempDrivers[i].team.drivers[j] = tempDrivers[i].team.drivers[j].id;
-                            }
-                        }
-                    }
-                }
-
-                console.log(tempDrivers);
-
-                commit('setDrivers', tempDrivers);
+                commit('setDrivers', drivers);
+                console.log('Drivers', drivers);
             } catch (error) {
                 console.error(error);
             }
         },
-        async fetchTeams({commit}) {
+        async fetchConstructors({commit}) {
             try {
-                const response = await fetch(`http://localhost:8081/api/teams`);
-                if (!response.ok) throw new Error("Failed to fetch teams");
-                const tempTeams = await response.json();
+                const response = await fetch(`http://localhost:8081/api/constructors`);
+                if (!response.ok) throw new Error("Failed to fetch constructors");
+                let constructors = await response.json();
 
-                // Process team data here, as you've done in the previous setup
-                for (let i = 0; i < tempTeams.length; i++) {
-                    if (typeof tempTeams[i].drivers[0] === 'number') {
-                        const driverResponse = await fetch(`http://localhost:8081/api/drivers/id=${tempTeams[i].drivers[0]}`);
-                        if (!driverResponse.ok) throw new Error("Failed to fetch driver info");
-                        tempTeams[i].drivers[0] = await driverResponse.json();
-                    }
+                // Sort constructors based on total driver points using getConstructorPoints
+                constructors = constructors.sort((a, b) => b.fantasyPoints - a.fantasyPoints);
 
-                    if (typeof tempTeams[i].drivers[1] === 'number') {
-                        const driverResponse = await fetch(`http://localhost:8081/api/drivers/id=${tempTeams[i].drivers[1]}`);
-                        if (!driverResponse.ok) throw new Error("Failed to fetch driver info");
-                        tempTeams[i].drivers[1] = await driverResponse.json();
-                    }
-                }
+                commit('setConstructors', constructors);
+                console.log('Constructors', constructors);
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async fetchCircuits({commit}) {
+            try {
+                const response = await fetch(`http://localhost:8081/api/circuits`);
+                if (!response.ok) throw new Error("Failed to fetch circuits");
+                let circuits = await response.json();
 
-                console.log(tempTeams);
+                commit('setCircuits', circuits);
+                console.log('Circuits', circuits);
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async fetchGrandsPrix({commit}) {
+            try {
+                const response = await fetch(`http://localhost:8081/api/grands-prix`);
+                if (!response.ok) throw new Error("Failed to fetch grands prix");
+                let grandsPrix = await response.json();
 
-                commit('setTeams', tempTeams);
+                commit('setGrandsPrix', grandsPrix);
+                console.log('Grands Prix', grandsPrix);
             } catch (error) {
                 console.error(error);
             }
@@ -95,8 +81,14 @@ export default createStore({
         allDrivers(state) {
             return state.drivers;
         },
-        allTeams(state) {
-            return state.teams;
+        allConstructors(state) {
+            return state.constructors;
+        },
+        allCircuits(state) {
+            return state.circuits;
+        },
+        allGrandsPrix(state) {
+            return state.grandsPrix;
         },
     },
 });
