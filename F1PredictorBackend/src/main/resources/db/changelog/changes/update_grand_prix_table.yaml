@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: change_grand_prix_table
+      author: Daniel_Judd
+      changes:
+        - addColumn:
+            tableName: grand_prix
+            columns:
+              - column:
+                  name: red_flags
+                  type: TINYINT UNSIGNED # 0-255
+                  defaultValueNumeric: '0'
+              - column:
+                  name: yellow_flags
+                  type: TINYINT UNSIGNED # 0-255
+                  defaultValueNumeric: '0'
+  - changeSet:
+      id: add_full_name_column_to_grand_prix_table
+      author: Daniel_Judd
+      changes:
+        - addColumn:
+            tableName: grand_prix
+            columns:
+              - column:
+                  name: full_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false

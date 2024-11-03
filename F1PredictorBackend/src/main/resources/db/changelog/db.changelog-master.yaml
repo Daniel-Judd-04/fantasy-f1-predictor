@@ -1,3 +1,7 @@
 databaseChangeLog:
   - include:
+      file: db/changelog/changes/add_constructor_id_to_results_tables.yaml
+  - include:
       file: db/changelog/changes/db.changelog-1.0-initial-schema.yaml
+  - include:
+      file: db/changelog/changes/update_grand_prix_table.yaml

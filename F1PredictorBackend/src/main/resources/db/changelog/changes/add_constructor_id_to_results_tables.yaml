@@ -1,0 +1,126 @@
+databaseChangeLog:
+  - changeSet:
+      id: drop-driver-fk-qualifying-result
+      author: Daniel_Judd
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: qualifying_result
+            constraintName: fk_qualifying_result_driver
+
+  - changeSet:
+      id: drop-grand-prix-fk-qualifying-result
+      author: Daniel_Judd
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: qualifying_result
+            constraintName: fk_qualifying_result_grand_prix
+
+  - changeSet:
+      id: drop-constructor-fk-qualifying-result
+      author: Daniel_Judd
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: qualifying_result
+            constraintName: fk_qualifying_result_constructor
+
+  - changeSet:
+      id: drop-driver-fk-race-result
+      author: Daniel_Judd
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: race_result
+            constraintName: fk_race_result_driver
+
+  - changeSet:
+      id: drop-grand-prix-fk-race-result
+      author: Daniel_Judd
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: race_result
+            constraintName: fk_race_result_grand_prix
+
+  - changeSet:
+      id: drop-constructor-fk-race-result
+      author: Daniel_Judd
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: race_result
+            constraintName: fk_race_result_constructor
+
+  - changeSet:
+      id: drop-existing-pk-qualifying-result
+      author: Daniel_Judd
+      changes:
+        - dropPrimaryKey:
+            tableName: qualifying_result
+
+  - changeSet:
+      id: drop-existing-pk-race-result
+      author: Daniel_Judd
+      changes:
+        - dropPrimaryKey:
+            tableName: race_result
+
+  - changeSet:
+      id: update-qualifying-result-primary-key
+      author: Daniel_Judd
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: qualifying_result
+            baseColumnNames: constructor_id
+            referencedTableName: constructor
+            referencedColumnNames: constructor_id
+            constraintName: fk_qualifying_result_constructor
+        - addPrimaryKey:
+            tableName: qualifying_result
+            columnNames: driver_id, grand_prix_id, constructor_id
+            constraintName: pk_qualifying_result
+
+  - changeSet:
+      id: update-race-result-primary-key
+      author: Daniel_Judd
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: race_result
+            baseColumnNames: constructor_id
+            referencedTableName: constructor
+            referencedColumnNames: constructor_id
+            constraintName: fk_race_result_constructor
+        - addPrimaryKey:
+            tableName: race_result
+            columnNames: driver_id, grand_prix_id, constructor_id
+            constraintName: pk_race_result
+
+  - changeSet:
+      id: re-add-fk-qualifying-result
+      author: Daniel_Judd
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: qualifying_result
+            baseColumnNames: driver_id
+            referencedTableName: driver
+            referencedColumnNames: driver_id
+            constraintName: fk_qualifying_result_driver
+        - addForeignKeyConstraint:
+            baseTableName: qualifying_result
+            baseColumnNames: grand_prix_id
+            referencedTableName: grand_prix
+            referencedColumnNames: grand_prix_id
+            constraintName: fk_qualifying_result_grand_prix
+
+  - changeSet:
+      id: re-add-fk-race-result
+      author: Daniel_Judd
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: race_result
+            baseColumnNames: driver_id
+            referencedTableName: driver
+            referencedColumnNames: driver_id
+            constraintName: fk_race_result_driver
+        - addForeignKeyConstraint:
+            baseTableName: race_result
+            baseColumnNames: grand_prix_id
+            referencedTableName: grand_prix
+            referencedColumnNames: grand_prix_id
+            constraintName: fk_race_result_grand_prix
