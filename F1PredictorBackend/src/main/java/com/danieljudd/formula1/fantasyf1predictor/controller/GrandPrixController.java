@@ -25,4 +25,15 @@ public class GrandPrixController {
   public GrandPrix getGrandPrixById(@PathVariable long id) {
     return grandPrixRepository.findById(id).orElse(null);
   }
+
+  @GetMapping("/season={season}")
+  public List<GrandPrix> getGrandPrixBySeason(@PathVariable int season) {
+    return grandPrixRepository.findBySeason(season);
+  }
+
+  @GetMapping("/season={season}/round={round}")
+  public GrandPrix getGrandPrixBySeasonAndRound(@PathVariable int season,
+      @PathVariable byte round) {
+    return grandPrixRepository.findBySeasonAndRound(season, round);
+  }
 }

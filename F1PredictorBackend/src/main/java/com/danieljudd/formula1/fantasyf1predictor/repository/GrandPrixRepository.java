@@ -10,4 +10,6 @@ public interface GrandPrixRepository extends JpaRepository<GrandPrix, Long> {
 
   List<GrandPrix> findBySeason(int season);
 
+  GrandPrix findBySeasonAndRound(int season, byte round);
+
 }
