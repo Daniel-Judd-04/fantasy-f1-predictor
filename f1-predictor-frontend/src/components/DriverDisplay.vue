@@ -29,8 +29,8 @@ export default {
 
 <template>
   <div
-      class="tw-w-56 tw-rounded tw-h-8 tw-text-white tw-bg-primary-dark tw-border-2 hover-parent"
-      :class="`tw-border-team-${getConstructor(driver.constructor).shortName}`">
+      class="hover-parent tw-w-56 tw-rounded tw-h-8 tw-text-white tw-bg-gradient-to-b tw-from-primary-dark tw-to-200% tw-border-1 tw-border-primary-light"
+      :class="`tw-to-team-${getConstructor(driver.constructor).shortName}`">
     <div class="tw-flex tw-flex-row tw-gap-2 tw-items-center tw-font-medium tw-px-1 tw-text-left">
       <div v-if="showFlag" class="flag-frame tw-my-1 tw-h-5 tw-align-middle tw-border-f1-white tw-rounded">
         <img :src="flagURL" alt="Flag" class="flag-image"/>

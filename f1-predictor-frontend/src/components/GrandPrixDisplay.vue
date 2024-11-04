@@ -27,14 +27,6 @@ export default {
       circuit: {},
     };
   },
-  watch: {
-    grandPrix: {
-      immediate: true,
-      handler() {
-        this.circuit = getCircuitById(this.grandPrix.circuit);
-      }
-    }
-  },
   computed: {
     formattedDate() {
       if (!this.grandPrix.startTime) {
@@ -70,14 +62,19 @@ export default {
       return format(targetDate, 'dd/MM/yyyy');
     },
     inFuture() {
+      if (!this.grandPrix.startTime) {
+        return false;
+      }
       return isFuture(parseISO(this.grandPrix.startTime));
     }
   },
   mounted() {
     // Set an interval to update the currentTime every minute for accurate time differences
     this.timer = setInterval(() => {
-      this.currentTime = new Date();
-    }, 60000);
+          this.currentTime = new Date();
+        },
+        60000);
+    this.circuit = getCircuitById(this.grandPrix.circuit);
   },
   beforeUnmount() {
     // Clear the timer to prevent memory leaks
@@ -109,7 +106,7 @@ export default {
 
 <template>
   <div
-      class="tw-w-96 tw-h-64 tw-bg-gradient-to-bl tw-from-primary-dark tw-to-f1-red tw-to-150% tw-text-f1-white tw-flex tw-flex-col tw-border-2 tw-border-primary-light tw-rounded">
+      class="tw-w-96 tw-h-full tw-bg-gradient-to-br tw-from-primary-dark tw-to-f1-red tw-to-150% tw-text-f1-white tw-flex tw-flex-col tw-border-1 tw-border-primary-light tw-rounded">
     <div class="tw-flex tw-flex-row tw-py-1">
       <div v-if="grandPrix.sprint" class="tw-h-full tw-pl-2">
         <span class="material-symbols-outlined">sprint</span>
@@ -119,45 +116,61 @@ export default {
         <div>{{ getLocation() }}</div>
       </div>
     </div>
-    <div class="tw-w-full tw-h-full tw-bg-primary-dark tw-flex tw-flex-col tw-gap-2 tw-py-2">
-      <div class="tw-flex tw-text-xs tw-flex-row tw-justify-around">
-        <div>Laps: {{ circuit.laps }}</div>
-        <div>Turns: {{ circuit.corners }}</div>
-        <div>DRS: {{ circuit.drsZones }}</div>
-        <div>Length: {{ circuit.length }} km</div>
-        <div>Race: {{ getRaceLength() }} km</div>
-      </div>
+    <div class="tw-w-full tw-h-full tw-bg-primary-dark tw-flex tw-flex-col tw-gap-2 tw-pt-2">
       <div class="tw-flex tw-flex-row tw-h-full tw-px-2 tw-gap-2">
         <div class="tw-h-full tw-w-full tw-bg-white tw-rounded">
           <!--IMAGE-->
         </div>
-        <div v-if="!inFuture"
-             class="tw-font-thin tw-border-y-2 tw-border-primary-light tw-ml-auto tw-w-28 tw-flex tw-flex-col tw-justify-around">
+        <div
+            class="tw-font-thin tw-border-y-1 tw-border-primary-light tw-ml-auto tw-w-36 tw-text-xs tw-flex tw-flex-col tw-justify-around">
           <div class="tw-flex">
-            <span class="material-symbols-outlined tw-mr-auto">heat</span>
-            <div>{{ grandPrix.airTemperature }}°C</div>
+            <div>Laps:</div>
+            <div class="tw-ml-auto">{{ circuit.laps }}</div>
           </div>
           <div class="tw-flex">
-            <span class="material-symbols-outlined tw-mr-auto">road</span>
-            <div>{{ grandPrix.trackTemperature }}°C</div>
+            <div>Turns:</div>
+            <div class="tw-ml-auto">{{ circuit.corners }}</div>
           </div>
           <div class="tw-flex">
-            <span class="material-symbols-outlined tw-mr-auto">water_do</span>
-            <div>{{ grandPrix.humidity }}%</div>
+            <div>DRS:</div>
+            <div class="tw-ml-auto">{{ circuit.drsZones }}</div>
           </div>
           <div class="tw-flex">
-            <span class="material-symbols-outlined tw-mr-auto">air</span>
-            <div>{{ grandPrix.windSpeed }} mph</div>
+            <div>Length:</div>
+            <div class="tw-ml-auto">{{ circuit.length }}km</div>
           </div>
           <div class="tw-flex">
-            <span class="material-symbols-outlined tw-mr-auto">rainy_light</span>
-            <div>{{ grandPrix.rainfall ? 'Yes' : 'No' }}</div>
+            <div>Race:</div>
+            <div class="tw-ml-auto">{{ getRaceLength() }}km</div>
           </div>
         </div>
       </div>
-    </div>
-    <div v-if="inFuture" class="tw-font-bold tw-bg-primary">
-      {{ formattedDate }}
+
+      <div v-if="!inFuture" class="tw-flex tw-h-8 tw-flex-row tw-justify-around tw-items-center tw-pb-1">
+        <div class="tw-flex tw-items-center tw-gap-1">
+          <span class="material-symbols-outlined">heat</span>
+          <div>{{ grandPrix.airTemperature }}°C</div>
+        </div>
+        <div class="tw-flex tw-items-center tw-gap-1">
+          <span class="material-symbols-outlined">road</span>
+          <div>{{ grandPrix.trackTemperature }}°C</div>
+        </div>
+        <div class="tw-flex tw-items-center tw-gap-1">
+          <span class="material-symbols-outlined">water_do</span>
+          <div>{{ grandPrix.humidity }}%</div>
+        </div>
+        <div class="tw-flex tw-items-center tw-gap-1">
+          <span class="material-symbols-outlined">air</span>
+          <div>{{ grandPrix.windSpeed }} mph</div>
+        </div>
+        <div class="tw-flex tw-items-center tw-gap-1">
+          <span class="material-symbols-outlined">rainy_light</span>
+          <div>{{ grandPrix.rainfall ? 'Yes' : 'No' }}</div>
+        </div>
+      </div>
+      <div v-if="inFuture" class="tw-h-8 tw-font-bold tw-bg-primary">
+        {{ formattedDate }}
+      </div>
     </div>
   </div>
 </template>
