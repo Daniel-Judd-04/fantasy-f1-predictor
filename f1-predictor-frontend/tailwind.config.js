@@ -43,7 +43,19 @@ module.exports = {
                 18: '4.5rem',
             },
             width: {
+                '200%': '200%',
+                200: '50rem',
+                150: '37.5rem',
                 50: '12.5rem',
+            },
+            padding: {
+                '100%': '100%',
+            },
+            borderWidth: {
+                1: '1px',
+            },
+            gradientColorStopPositions: {
+                '200%': '200%',
             }
         },
     },

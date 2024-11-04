@@ -46,3 +46,15 @@ export function getConstructorPoints(constructorId) {
     }
     return points;
 }
+
+const mockCircuit = {}
+
+export function getCircuitById(circuitId) {
+    const circuits = store.getters.allCircuits;
+    for (const circuit of circuits) {
+        if (circuit.circuitId === circuitId) {
+            return circuit;
+        }
+    }
+    return mockCircuit;
+}
