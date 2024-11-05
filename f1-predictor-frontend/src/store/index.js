@@ -76,6 +76,30 @@ export default createStore({
                 console.error(error);
             }
         },
+        // eslint-disable-next-line no-unused-vars
+        async updateDriver({commit}, driver) {
+            try {
+                const response = await fetch(`http://localhost:8081/api/drivers`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        driverId: driver.driverId,
+                        fullName: driver.fullName,
+                        points: driver.points,
+                        fantasyPoints: driver.fantasyPoints,
+                        fantasyPrice: driver.fantasyPrice,
+                    }),
+                });
+                if (response.ok) {
+                    return true;
+                }
+            } catch (error) {
+                console.error(error);
+            }
+            return false;
+        }
     },
     getters: {
         allDrivers(state) {

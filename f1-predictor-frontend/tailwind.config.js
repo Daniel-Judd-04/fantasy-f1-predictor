@@ -50,6 +50,7 @@ module.exports = {
             },
             padding: {
                 '100%': '100%',
+                'full': '100vh',
             },
             borderWidth: {
                 1: '1px',
