@@ -1,6 +1,6 @@
 <script>
 
-import {getConciseName, getConstructor} from "@/utils/common";
+import {getConstructor} from "@/utils/common";
 
 export default {
   name: 'DriverDisplay',
@@ -22,7 +22,9 @@ export default {
   },
   methods: {
     getConstructor,
-    getConciseName,
+    edit() {
+      this.$emit('edit', this.driver);
+    },
   }
 };
 </script>
@@ -38,13 +40,14 @@ export default {
       <div>
         {{ driver.fullName }}
       </div>
-      <div class="tw-ml-auto tw-w-9 tw-h-5 tw-rounded tw-relative tw-cursor-pointer">
+      <div class="tw-ml-auto tw-w-9 tw-h-5 tw-rounded tw-relative">
         <div class="not-hover-child tw-text-right tw-absolute tw-w-full tw-h-full">
           {{ driver.fantasyPoints }}
         </div>
         <div
-            class="hover-child tw-absolute tw-transition-opacity tw-opacity-0 tw-w-full tw-h-full tw-flex tw-items-center tw-justify-end ">
-          <span class="material-icons tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center">tune</span>
+            class="hover-child tw-absolute tw-transition-opacity tw-opacity-0 tw-w-full tw-h-full tw-flex tw-items-center tw-justify-end">
+          <span @click="edit()"
+                class="material-icons tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center tw-cursor-pointer">tune</span>
         </div>
       </div>
     </div>
