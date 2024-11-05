@@ -8,10 +8,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ConstructorRepository extends JpaRepository<Constructor, Long> {
 
-  // Find teams by nationality
-  List<Constructor> findByCountry(String country);
+  Constructor findByConstructorId(int constructorId);
 
-  // Find team by short name
+  List<Constructor> findByCountry(String country);
+  
   Constructor findByShortName(String shortName);
 }
 

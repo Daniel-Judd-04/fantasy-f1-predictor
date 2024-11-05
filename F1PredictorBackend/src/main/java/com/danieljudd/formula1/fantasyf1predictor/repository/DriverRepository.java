@@ -6,7 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DriverRepository extends JpaRepository<Driver, Long> {
 
-  // Find drivers by nationality
+  Driver findByDriverId(int driverId);
+
   List<Driver> findByCountry(String country);
 
   Driver findByShortName(String shortName);
