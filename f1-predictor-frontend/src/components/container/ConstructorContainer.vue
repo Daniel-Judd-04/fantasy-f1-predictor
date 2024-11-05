@@ -1,6 +1,6 @@
 <script>
 
-import ConstructorDisplay from "@/components/ConstructorDisplay.vue";
+import ConstructorDisplay from "@/components/display/ConstructorDisplay.vue";
 import {getFlagURL} from "@/utils/common";
 import {mapGetters} from "vuex";
 
@@ -12,6 +12,9 @@ export default {
   },
   methods: {
     getFlagURL,
+    edit(constructor) {
+      this.$emit('edit', constructor, this.allConstructors);
+    },
   },
 };
 
@@ -19,7 +22,8 @@ export default {
 
 <template>
   <div class="tw-flex tw-flex-col tw-h-full tw-justify-between">
-    <ConstructorDisplay v-for="constructor in allConstructors" :key="constructor.code" :constructor="constructor"
+    <ConstructorDisplay @edit="edit" v-for="constructor in allConstructors" :key="constructor.code"
+                        :constructor="constructor"
                         :flagURL="getFlagURL(constructor.country)"/>
   </div>
 </template>

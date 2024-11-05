@@ -20,6 +20,9 @@ export default {
     getConciseName,
     getDriver,
     getConstructorPoints,
+    edit() {
+      this.$emit('edit', this.constructor);
+    },
   }
 };
 </script>
@@ -35,13 +38,14 @@ export default {
       <div>
         {{ constructor.fullName }}
       </div>
-      <div class="tw-ml-auto tw-w-9 tw-h-5 tw-rounded tw-relative tw-cursor-pointer">
+      <div class="tw-ml-auto tw-w-9 tw-h-5 tw-rounded tw-relative">
         <div class="not-hover-child tw-text-right tw-absolute tw-w-full tw-h-full">
           {{ constructor.fantasyPoints }}
         </div>
         <div
             class="hover-child tw-absolute tw-transition-opacity tw-opacity-0 tw-w-full tw-h-full tw-flex tw-items-center tw-justify-end ">
-          <span class="material-icons tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center">tune</span>
+          <span @click="edit"
+                class="material-icons tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center tw-cursor-pointer">tune</span>
         </div>
       </div>
     </div>
