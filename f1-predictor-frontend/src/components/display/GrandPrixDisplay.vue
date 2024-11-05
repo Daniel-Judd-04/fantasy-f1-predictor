@@ -19,6 +19,14 @@ export default {
       default: () => ({}),
       type: Object,
       required: true
+    },
+    index: {
+      type: Number,
+      required: true
+    },
+    currentIndex: {
+      type: Number,
+      required: true
     }
   },
   data() {
@@ -74,7 +82,16 @@ export default {
           this.currentTime = new Date();
         },
         60000);
-    this.circuit = getCircuitById(this.grandPrix.circuit);
+  },
+  watch: {
+    grandPrix: {
+      immediate: true,
+      handler(newGrandPrix) {
+        if (newGrandPrix && newGrandPrix.circuit) {
+          this.circuit = getCircuitById(newGrandPrix.circuit);
+        }
+      }
+    }
   },
   beforeUnmount() {
     // Clear the timer to prevent memory leaks
@@ -106,7 +123,8 @@ export default {
 
 <template>
   <div
-      class="tw-w-96 tw-h-full tw-bg-gradient-to-br tw-from-primary-dark tw-to-f1-red tw-to-150% tw-text-f1-white tw-flex tw-flex-col tw-border-1 tw-border-primary-light tw-rounded">
+      class="tw-w-96 tw-h-full tw-transition-colors tw-bg-gradient-to-br tw-from-primary-dark tw-to-150% tw-flex tw-flex-col tw-border-1 tw-rounded"
+      :class="[index === currentIndex ? 'tw-to-f1-red tw-text-f1-white tw-border-primary-light' : 'tw-to-primary tw-text-primary-light tw-border-primary']">
     <div class="tw-flex tw-flex-row tw-py-1">
       <div v-if="grandPrix.sprint" class="tw-h-full tw-pl-2">
         <span class="material-symbols-outlined">sprint</span>
@@ -118,7 +136,8 @@ export default {
     </div>
     <div class="tw-w-full tw-h-full tw-bg-primary-dark tw-flex tw-flex-col tw-gap-2 tw-pt-2">
       <div class="tw-flex tw-flex-row tw-h-full tw-px-2 tw-gap-2">
-        <div class="tw-h-full tw-w-full tw-bg-white tw-rounded">
+        <div class="tw-h-full tw-w-full tw-bg-white tw-rounded"
+             :class="[index === currentIndex ? '' : 'tw-opacity-50']">
           <!--IMAGE-->
         </div>
         <div
