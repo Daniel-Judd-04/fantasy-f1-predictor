@@ -31,7 +31,7 @@ public class GrandPrixController {
     return grandPrixRepository.findBySeason(season);
   }
 
-  @GetMapping("/season={season}/round={round}")
+  @GetMapping("/season={season}&round={round}")
   public GrandPrix getGrandPrixBySeasonAndRound(@PathVariable int season,
       @PathVariable byte round) {
     return grandPrixRepository.findBySeasonAndRound(season, round);
