@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_active_to_driver_table
+      author: Daniel_Judd
+      changes:
+        - addColumn:
+            tableName: driver
+            columns:
+              - column:
+                  name: active
+                  type: BOOLEAN
+                  defaultValueBoolean: true
