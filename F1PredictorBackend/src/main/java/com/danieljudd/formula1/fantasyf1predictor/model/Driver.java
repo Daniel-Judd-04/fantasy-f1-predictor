@@ -55,6 +55,8 @@ public class Driver {
   private int fantasyPoints;
   private BigDecimal fantasyPrice;
 
+  private boolean active;
+
   /**
    * Constructor for Driver.
    *

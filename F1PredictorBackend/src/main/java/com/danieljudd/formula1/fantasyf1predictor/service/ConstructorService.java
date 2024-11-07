@@ -16,7 +16,9 @@ public class ConstructorService {
         constructor.getConstructorId());
 
     if (existingConstructor == null) {
-      throw new IllegalArgumentException("Constructor not found");
+      throw new IllegalArgumentException(
+          "Constructor " + constructor.getFullName() + " not found with id "
+              + constructor.getConstructorId());
     }
 
     // Update fields

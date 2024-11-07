@@ -25,6 +25,7 @@ public class DriverService {
     existingDriver.setPoints(driver.getPoints());
     existingDriver.setFantasyPoints(driver.getFantasyPoints());
     existingDriver.setFantasyPrice(driver.getFantasyPrice());
+    existingDriver.setActive(driver.isActive());
 
     // Save and return the updated driver
     return driverRepository.save(existingDriver);
