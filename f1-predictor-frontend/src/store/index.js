@@ -90,6 +90,30 @@ export default createStore({
                         points: driver.points,
                         fantasyPoints: driver.fantasyPoints,
                         fantasyPrice: driver.fantasyPrice,
+                        active: driver.active,
+                    }),
+                });
+                if (response.ok) {
+                    return true;
+                }
+            } catch (error) {
+                console.error(error);
+            }
+            return false;
+        },
+        // eslint-disable-next-line no-unused-vars
+        async updateConstructor({commit}, constructor) {
+            try {
+                const response = await fetch(`http://localhost:8081/api/constructors`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        constructorId: constructor.constructorId,
+                        fullName: constructor.fullName,
+                        fantasyPoints: constructor.fantasyPoints,
+                        fantasyPrice: constructor.fantasyPrice,
                     }),
                 });
                 if (response.ok) {

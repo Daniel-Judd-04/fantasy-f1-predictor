@@ -58,3 +58,15 @@ export function getCircuitById(circuitId) {
     }
     return mockCircuit;
 }
+
+export function sort(array, sortBy) {
+    if (sortBy === 'points') {
+        return array.sort((a, b) => b.points - a.points);
+    } else if (sortBy === 'fantasyPoints') {
+        return array.sort((a, b) => b.fantasyPoints - a.fantasyPoints);
+    } else if (sortBy === 'fantasyPrice') {
+        return array.sort((a, b) => b.fantasyPrice - a.fantasyPrice);
+    }
+    console.error('Invalid sorting method: ' + sortBy, 'For array: ', array);
+    return null;
+}
