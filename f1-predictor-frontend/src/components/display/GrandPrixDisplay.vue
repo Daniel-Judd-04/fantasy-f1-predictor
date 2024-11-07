@@ -1,15 +1,5 @@
 <script>
-import {
-  differenceInDays,
-  differenceInHours,
-  differenceInMinutes,
-  differenceInMonths,
-  differenceInWeeks,
-  differenceInYears,
-  format,
-  isFuture,
-  parseISO
-} from 'date-fns';
+import {differenceInDays, differenceInHours, differenceInMinutes, differenceInMonths, differenceInWeeks, differenceInYears, format, isFuture, parseISO} from 'date-fns';
 import {getCircuitById} from "@/utils/common";
 
 export default {
@@ -103,7 +93,7 @@ export default {
     },
     getLocation() {
       let location = '';
-      let locations = [this.circuit.country, this.circuit.locationName, this.circuit.fullName];
+      let locations = [this.circuit.fullName, this.circuit.locationName, this.circuit.country];
 
       for (let i = 0; i < locations.length; i++) {
         if (locations[i]) {
@@ -136,12 +126,20 @@ export default {
     </div>
     <div class="tw-w-full tw-h-full tw-bg-primary-dark tw-flex tw-flex-col tw-gap-2 tw-pt-2">
       <div class="tw-flex tw-flex-row tw-h-full tw-px-2 tw-gap-2">
-        <div class="tw-h-full tw-w-full tw-bg-white tw-rounded"
+        <div class="tw-h-full tw-w-full tw-bg-f1-black tw-border-primary-light tw-border-1 tw-rounded"
              :class="[index === currentIndex ? '' : 'tw-opacity-50']">
           <!--IMAGE-->
         </div>
         <div
             class="tw-font-thin tw-border-y-1 tw-border-primary-light tw-ml-auto tw-w-36 tw-text-xs tw-flex tw-flex-col tw-justify-around">
+          <div class="tw-flex">
+            <div>Length:</div>
+            <div class="tw-ml-auto">{{ circuit.length }}km</div>
+          </div>
+          <div class="tw-flex">
+            <div>Race:</div>
+            <div class="tw-ml-auto">{{ getRaceLength() }}km</div>
+          </div>
           <div class="tw-flex">
             <div>Laps:</div>
             <div class="tw-ml-auto">{{ circuit.laps }}</div>
@@ -153,14 +151,6 @@ export default {
           <div class="tw-flex">
             <div>DRS:</div>
             <div class="tw-ml-auto">{{ circuit.drsZones }}</div>
-          </div>
-          <div class="tw-flex">
-            <div>Length:</div>
-            <div class="tw-ml-auto">{{ circuit.length }}km</div>
-          </div>
-          <div class="tw-flex">
-            <div>Race:</div>
-            <div class="tw-ml-auto">{{ getRaceLength() }}km</div>
           </div>
         </div>
       </div>

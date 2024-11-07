@@ -30,11 +30,11 @@ export default {
 </script>
 
 <template>
-  <div
-      class="hover-parent tw-w-56 tw-rounded tw-h-8 tw-text-white tw-bg-gradient-to-b tw-from-primary-dark tw-to-200% tw-border-1 tw-border-primary-light"
-      :class="`tw-to-team-${getConstructor(driver.constructor).shortName}`">
-    <div class="tw-flex tw-flex-row tw-gap-2 tw-items-center tw-font-medium tw-px-1 tw-text-left">
-      <div v-if="showFlag" class="flag-frame tw-my-1 tw-h-5 tw-align-middle tw-border-f1-white tw-rounded">
+  <div class="hover-parent tw-w-56 tw-rounded tw-h-8 tw-text-white tw-bg-primary-dark tw-border-1 tw-border-primary-light">
+    <div :class="[`${driver.active ? '' : 'tw-text-primary-light'}`]"
+         class="tw-flex tw-flex-row tw-gap-2 tw-items-center tw-font-medium tw-px-1 tw-text-left">
+      <div v-if="showFlag" :class="[`tw-opacity-${driver.active ? '100' : '50'}`]"
+           class="flag-frame tw-border-1 tw-overflow-hidden tw-my-1 tw-h-5 tw-align-middle tw-border-f1-white tw-rounded">
         <img :src="flagURL" alt="Flag" class="flag-image"/>
       </div>
       <div>
@@ -44,10 +44,8 @@ export default {
         <div class="not-hover-child tw-text-right tw-absolute tw-w-full tw-h-full">
           {{ driver.fantasyPoints }}
         </div>
-        <div
-            class="hover-child tw-absolute tw-transition-opacity tw-opacity-0 tw-w-full tw-h-full tw-flex tw-items-center tw-justify-end">
-          <span @click="edit()"
-                class="material-icons tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center tw-cursor-pointer">tune</span>
+        <div class="hover-child tw-absolute tw-transition-opacity tw-w-full tw-h-full tw-flex tw-items-center tw-justify-end">
+          <span @click="edit()" class="material-icons tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center tw-cursor-pointer">tune</span>
         </div>
       </div>
     </div>
@@ -60,24 +58,5 @@ export default {
 
 
 <style>
-/* Custom hover styles */
-.hover-parent:hover .hover-child {
-  opacity: 1;
-}
 
-.hover-parent:hover .not-hover-child {
-  opacity: 0;
-}
-
-.flag-frame {
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border: 1px solid;
-}
-
-.flag-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 </style>

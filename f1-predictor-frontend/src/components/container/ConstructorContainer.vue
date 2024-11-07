@@ -3,28 +3,40 @@
 import ConstructorDisplay from "@/components/display/ConstructorDisplay.vue";
 import {getFlagURL} from "@/utils/common";
 import {mapGetters} from "vuex";
+import ContinueButton from "@/components/common/ContinueButton.vue";
 
 export default {
   name: 'ConstructorContainer',
-  components: {ConstructorDisplay},
+  components: {ContinueButton, ConstructorDisplay},
   computed: {
     ...mapGetters(['allConstructors']),
   },
   methods: {
     getFlagURL,
-    edit(constructor) {
-      this.$emit('edit', constructor, this.allConstructors);
+    editConstructor(constructor) {
+      this.$emit('editObject', constructor, this.allConstructors);
     },
+    editConstructors() {
+      this.$emit('editArray', this.allConstructors);
+    }
   },
 };
 
 </script>
 
 <template>
-  <div class="tw-flex tw-flex-col tw-h-full tw-justify-between">
-    <ConstructorDisplay @edit="edit" v-for="constructor in allConstructors" :key="constructor.code"
-                        :constructor="constructor"
-                        :flagURL="getFlagURL(constructor.country)"/>
+  <div class="tw-flex tw-flex-col tw-h-full tw-gap-2">
+    <div class="hover-parent tw-border-primary-light tw-text-f1-white tw-relative tw-flex tw-flex-row tw-justify-center tw-items-center">
+      <div class="tw-font-medium tw-text-xl">Constructors</div>
+      <ContinueButton @continue="editConstructors" class="hover-child tw-absolute tw-right-0 tw-h-8">
+        Edit
+      </ContinueButton>
+    </div>
+    <div class="tw-flex tw-flex-col tw-h-full tw-justify-between">
+      <ConstructorDisplay @edit="editConstructor" v-for="constructor in allConstructors" :key="constructor.code"
+                          :constructor="constructor"
+                          :flagURL="getFlagURL(constructor.country)"/>
+    </div>
   </div>
 </template>
 

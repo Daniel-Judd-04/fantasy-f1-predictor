@@ -3,10 +3,11 @@
 import DriverDisplay from "@/components/display/DriverDisplay.vue";
 import {getFlagURL} from "@/utils/common";
 import {mapGetters} from "vuex";
+import ContinueButton from "@/components/common/ContinueButton.vue";
 
 export default {
   name: 'DriverContainer',
-  components: {DriverDisplay},
+  components: {ContinueButton, DriverDisplay},
   computed: {
     ...mapGetters(["allDrivers"]),
   },
@@ -21,9 +22,17 @@ export default {
 </script>
 
 <template>
-  <div class="tw-flex tw-flex-col tw-h-full tw-justify-between">
-    <DriverDisplay @edit="edit" v-for="driver in allDrivers" :key="driver.code" :driver="driver"
-                   :flagURL="getFlagURL(driver.country)"/>
+  <div class="tw-flex tw-flex-col tw-h-full tw-gap-2">
+    <div class="hover-parent tw-border-primary-light tw-text-f1-white tw-relative tw-flex tw-flex-row tw-justify-center tw-items-center">
+      <div class="tw-font-medium tw-text-xl">Drivers</div>
+      <ContinueButton class="hover-child tw-absolute tw-right-0 tw-h-8">
+        Edit
+      </ContinueButton>
+    </div>
+    <div class="tw-flex tw-flex-col tw-h-full tw-justify-between">
+      <DriverDisplay @edit="edit" v-for="driver in allDrivers" :key="driver.code" :driver="driver"
+                     :flagURL="getFlagURL(driver.country)"/>
+    </div>
   </div>
 </template>
 
