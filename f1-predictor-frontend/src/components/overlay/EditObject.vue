@@ -2,7 +2,6 @@
 import CloseButton from "@/components/common/CloseButton.vue";
 import ContinueButton from "@/components/common/ContinueButton.vue";
 import {getConstructor, getFlagURL} from "@/utils/common";
-import {mapActions} from "vuex";
 import UserInput from "@/components/common/UserInput.vue";
 
 export default {
@@ -20,15 +19,21 @@ export default {
   data() {
     return {
       currentIndex: this.startIndex,
+      tempActiveStatus: this.objectArray[this.startIndex].active,
     }
   },
   watch: {
     startIndex: {
       immediate: true,
       handler() {
-        if (this.startIndex !== -1) {
-          this.currentIndex = this.startIndex;
-        }
+        this.currentIndex = this.startIndex;
+        this.tempActiveStatus = this.objectArray[this.startIndex].active;
+      }
+    },
+    currentIndex: {
+      immediate: true,
+      handler() {
+        this.tempActiveStatus = this.objectArray[this.currentIndex].active;
       }
     }
   },
@@ -68,10 +73,9 @@ export default {
       }
       return 'f1-red';
     },
-    getConstructor,
   },
   methods: {
-    ...mapActions(['updateDriver', 'updateConstructor']),
+    getConstructor,
     isDifference() {
       if (this.isLoaded) {
         if (this.getProperty.fullName !== document.getElementById('fullName').value) {
@@ -84,13 +88,13 @@ export default {
           return true;
         } else if (this.getProperty.fantasyPrice !== parseFloat(document.getElementById('fantasyPrice').value)) {
           return true;
-        } else if (this.isDriver && this.getProperty.active !== document.getElementById('active').checked) {
+        } else if (this.getProperty.active !== this.tempActiveStatus) {
           return true;
         }
       }
       return false;
     },
-    save() {
+    async save() {
       if (!this.isDifference()) {
         return;
       }
@@ -98,40 +102,36 @@ export default {
       this.getProperty.country = document.getElementById('country').value;
       this.getProperty.fantasyPoints = parseInt(document.getElementById('fantasyPoints').value);
       this.getProperty.fantasyPrice = parseFloat(document.getElementById('fantasyPrice').value);
+      this.getProperty.active = this.tempActiveStatus;
       if (this.isDriver) {
         this.getProperty.points = parseFloat(document.getElementById('points').value);
-        this.getProperty.active = document.getElementById('active').checked;
       }
 
       // Save Data
-      if (this.isDriver) {
-        this.$store.dispatch('updateDriver', this.getProperty).then(() => {
-          this.$emit('success');
-        });
-      } else if (this.isConstructor) {
-        this.$store.dispatch('updateConstructor', this.getProperty).then(() => {
-          this.$emit('success');
-        });
+      if (await this.$store.dispatch('update', this.getProperty)) {
+        this.$emit('success');
+      } else {
+        console.warn('Failed to save data');
       }
     },
-    close() {
+    async close() {
       // Save Data
-      this.save()
+      await this.save()
       // Exit
       this.$emit('exit');
     },
     exit() {
       this.$emit('exit');
     },
-    previous() {
+    async previous() {
       // Save Data
-      this.save();
+      await this.save();
       // Decrement index
       this.currentIndex--;
     },
-    next() {
+    async next() {
       // Save Data
-      this.save();
+      await this.save();
       // Increment index
       this.currentIndex++;
     },
@@ -160,7 +160,13 @@ export default {
       <UserInput name="Points" type="number" :step="1" v-if="isDriver" :default-value="getProperty.points.toString()"/>
       <UserInput name="Fantasy Points" type="number" :step="1" v-if="isDriver || isConstructor" :default-value="getProperty.fantasyPoints.toString()"/>
       <UserInput name="Fantasy Price" type="number" :step="0.1" v-if="isDriver || isConstructor" :default-value="getProperty.fantasyPrice.toString()"/>
-      <UserInput name="Active" type="checkbox" v-if="isDriver" :default-value="getProperty.active.toString()" :unique-key="currentIndex"/>
+      <div class="tw-flex tw-flex-row">
+        <div class="tw-flex tw-items-center">Active</div>
+        <div class="tw-ml-auto tw-w-12 tw-border-1 tw-border-primary-light tw-rounded tw-bg-primary-light tw-bg-opacity-5 tw-text-f1-white tw-text-center tw-cursor-pointer"
+             @click="tempActiveStatus = !tempActiveStatus" id="active">
+          {{ tempActiveStatus ? 'Yes' : 'No' }}
+        </div>
+      </div>
     </div>
     <div class="tw-flex tw-justify-between tw-h-14 tw-gap-2 tw-border-primary-light tw-none tw-bg-primary-dark tw-p-2 tw-rounded-b-lg">
       <ContinueButton @continue="previous" :class="[`${currentIndex > 0 ? '' : 'tw-invisible'}`]">
