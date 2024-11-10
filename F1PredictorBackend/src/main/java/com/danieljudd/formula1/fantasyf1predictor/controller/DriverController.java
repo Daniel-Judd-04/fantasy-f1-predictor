@@ -1,13 +1,16 @@
 package com.danieljudd.formula1.fantasyf1predictor.controller;
 
+import com.danieljudd.formula1.fantasyf1predictor.DTO.DriverDTO;
 import com.danieljudd.formula1.fantasyf1predictor.model.Driver;
 import com.danieljudd.formula1.fantasyf1predictor.repository.DriverRepository;
 import com.danieljudd.formula1.fantasyf1predictor.service.DriverService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,8 +47,14 @@ public class DriverController {
   }
 
   @PutMapping
-  public ResponseEntity<?> updateDriver(@RequestBody Driver driver) {
+  public ResponseEntity<Driver> updateDriver(@RequestBody Driver driver) {
     Driver updatedDriver = driverService.updateDriver(driver);
     return ResponseEntity.ok(updatedDriver);
+  }
+
+  @PostMapping
+  public ResponseEntity<Driver> addDriver(@RequestBody DriverDTO driverDTO) {
+    Driver newDriver = driverService.addDriver(driverDTO);
+    return new ResponseEntity<>(newDriver, HttpStatus.CREATED);
   }
 }

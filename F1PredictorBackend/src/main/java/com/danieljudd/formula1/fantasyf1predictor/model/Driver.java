@@ -51,11 +51,11 @@ public class Driver {
   @JsonIdentityReference(alwaysAsId = true)
   private Constructor constructor;
 
-  private BigDecimal points;
-  private int fantasyPoints;
-  private BigDecimal fantasyPrice;
+  private BigDecimal points = new BigDecimal("0.0");
+  private int fantasyPoints = 0;
+  private BigDecimal fantasyPrice = new BigDecimal("0.0");
 
-  private boolean active;
+  private boolean active = true;
 
   /**
    * Constructor for Driver.
@@ -73,5 +73,10 @@ public class Driver {
     this.carNumber = carNumber;
     this.country = country;
     this.constructor = constructor;
+  }
+
+  @Override
+  public String toString() {
+    return fullName + " (" + shortName + ")";
   }
 }

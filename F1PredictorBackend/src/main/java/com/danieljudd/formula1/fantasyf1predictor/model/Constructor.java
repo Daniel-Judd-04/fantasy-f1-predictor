@@ -12,6 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -44,12 +45,14 @@ public class Constructor {
   private String fullName;
   private String country;
 
-  @OneToMany(mappedBy = "constructor")
   @JsonIdentityReference(alwaysAsId = true)
-  private List<Driver> drivers;
+  @OneToMany(mappedBy = "constructor", orphanRemoval = true)
+  private List<Driver> drivers = new ArrayList<>();
 
-  private int fantasyPoints;
-  private BigDecimal fantasyPrice;
+  private int fantasyPoints = 0;
+  private BigDecimal fantasyPrice = new BigDecimal("0.0");
+
+  private boolean active = true;
 
   /**
    * Constructor for Constructor
@@ -62,5 +65,10 @@ public class Constructor {
     this.shortName = shortName;
     this.fullName = fullName;
     this.country = country;
+  }
+
+  @Override
+  public String toString() {
+    return fullName + " (" + shortName + ")";
   }
 }

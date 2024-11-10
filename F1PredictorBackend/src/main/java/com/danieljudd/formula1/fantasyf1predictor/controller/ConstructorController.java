@@ -1,13 +1,16 @@
 package com.danieljudd.formula1.fantasyf1predictor.controller;
 
+import com.danieljudd.formula1.fantasyf1predictor.DTO.ConstructorDTO;
 import com.danieljudd.formula1.fantasyf1predictor.model.Constructor;
 import com.danieljudd.formula1.fantasyf1predictor.repository.ConstructorRepository;
 import com.danieljudd.formula1.fantasyf1predictor.service.ConstructorService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,8 +47,14 @@ public class ConstructorController {
   }
 
   @PutMapping
-  public ResponseEntity<?> updateConstructor(@RequestBody Constructor constructor) {
+  public ResponseEntity<Constructor> updateConstructor(@RequestBody Constructor constructor) {
     Constructor updatedConstructor = constructorService.updateConstructor(constructor);
     return ResponseEntity.ok(updatedConstructor);
+  }
+
+  @PostMapping
+  public ResponseEntity<Constructor> addConstructor(@RequestBody ConstructorDTO constructor) {
+    Constructor newConstructor = constructorService.addConstructor(constructor);
+    return new ResponseEntity<>(newConstructor, HttpStatus.CREATED);
   }
 }
