@@ -61,7 +61,10 @@ export function getCircuitById(circuitId) {
 
 export function sort(array, sortBy) {
     if (sortBy === 'points') {
-        return array.sort((a, b) => b.points - a.points);
+        if (array[0].points) {
+            return array.sort((a, b) => b.points - a.points);
+        }
+        return array.sort((a, b) => getConstructorPoints(b.constructorId) - getConstructorPoints(a.constructorId));
     } else if (sortBy === 'fantasyPoints') {
         return array.sort((a, b) => b.fantasyPoints - a.fantasyPoints);
     } else if (sortBy === 'fantasyPrice') {

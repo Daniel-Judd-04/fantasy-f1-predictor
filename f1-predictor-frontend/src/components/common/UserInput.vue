@@ -4,8 +4,9 @@ export default {
   name: 'UserInput',
   props: {
     name: {
+      default: '',
       type: String,
-      required: true,
+      required: false,
     },
     type: {
       default: 'text',
@@ -25,11 +26,19 @@ export default {
       default: 0,
       type: Number,
       required: false,
+    },
+    fallBackId: {
+      default: '',
+      type: String,
+      required: false,
     }
   },
   computed: {
     getId() {
-      return this.name.charAt(0).toLowerCase() + this.name.substring(1).split(' ').join('');
+      if (this.name) {
+        return this.name.charAt(0).toLowerCase() + this.name.substring(1).split(' ').join('');
+      }
+      return this.fallBackId;
     }
   }
 }
@@ -37,11 +46,10 @@ export default {
 </script>
 
 <template>
-  <div class="tw-flex tw-flex-row">
-    <div class="tw-flex tw-items-center">{{ name }}</div>
+  <div class="tw-flex">
+    <div class="">{{ name }}</div>
     <input :id="getId" :type="type" :value="defaultValue"
-           :step="step" :checked="defaultValue" :key="uniqueKey"
-           :class="`${type === 'text' ? 'tw-w-44' : type === 'number' ? 'tw-w-16' : 'tw-h-6'}`"
+           :step="step" :class="`${type === 'text' ? 'tw-w-44' : 'tw-w-16'}`"
            class="tw-ml-auto tw-border-1 tw-border-primary-light tw-rounded tw-bg-primary-light tw-bg-opacity-5 tw-text-f1-white tw-text-center">
   </div>
 </template>
