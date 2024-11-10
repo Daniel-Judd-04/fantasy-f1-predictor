@@ -3,7 +3,7 @@
        class="tw-h-screen tw-w-screen tw-bg-f1-black tw-flex tw-flex-row tw-justify-between tw-gap-2 tw-p-1 tw-select-none">
     <ConstructorContainer @editObject="editObject" @editArray="editArray"/>
     <div class="tw-w-full tw-h-full tw-flex tw-flex-col tw-gap-2 tw-overflow-hidden">
-      <div class="tw-h-10 tw-text-3xl tw-font-extrabold tw-text-f1-white">
+      <div class="tw-h-8 tw-text-xl tw-font-extrabold tw-text-f1-white">
         Fantasy F1 Predictor v2
       </div>
       <div class="tw-h-64 tw-flex tw-flex-row tw-gap-2">
@@ -18,9 +18,9 @@
       </div>
     </div>
 
-    <DriverContainer @edit="editObject"/>
+    <DriverContainer @editObject="editObject" @editArray="editArray"/>
   </div>
-  <OverlayContainer @exit="showOverlay = false" v-if="showOverlay"
+  <OverlayContainer @exit="closeOverlay()" v-if="showOverlay"
                     :object-array="overlayArray" :start-index="overlayIndex"/>
 </template>
 
@@ -33,11 +33,11 @@ import OverlayContainer from "@/components/overlay/OverlayContainer.vue";
 
 export default {
   name: 'App',
-  created() {
-    this.fetchDrivers();
-    this.fetchConstructors();
-    this.fetchCircuits();
-    this.fetchGrandsPrix();
+  async created() {
+    await this.fetchDrivers();
+    await this.fetchConstructors();
+    await this.fetchCircuits();
+    await this.fetchGrandsPrix();
   },
   data() {
     return {
@@ -75,6 +75,11 @@ export default {
       this.overlayIndex = -1;
       this.overlayArray = array;
       this.showOverlay = true;
+    },
+    closeOverlay() {
+      this.showOverlay = false;
+      this.overlayArray = [];
+      this.overlayIndex = 0;
     }
   },
   computed: {

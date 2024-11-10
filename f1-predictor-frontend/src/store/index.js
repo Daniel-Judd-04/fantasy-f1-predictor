@@ -1,4 +1,5 @@
 import {createStore} from 'vuex';
+import {sort} from "@/utils/common";
 
 export default createStore({
     state: {
@@ -19,6 +20,12 @@ export default createStore({
         },
         setGrandsPrix(state, grandsPrix) {
             state.grandsPrix = grandsPrix;
+        },
+        addDriver(state, driver) {
+            state.drivers.push(driver);
+        },
+        addConstructor(state, constructor) {
+            state.constructors.push(constructor);
         },
     },
     actions: {
@@ -43,8 +50,8 @@ export default createStore({
                 if (!response.ok) throw new Error("Failed to fetch constructors");
                 let constructors = await response.json();
 
-                // Sort constructors based on total driver points using getConstructorPoints
-                constructors = constructors.sort((a, b) => b.fantasyPoints - a.fantasyPoints);
+                // Use saved setting in the future
+                sort(constructors, 'fantasyPoints');
 
                 commit('setConstructors', constructors);
                 console.log('Constructors', constructors);
@@ -77,51 +84,82 @@ export default createStore({
             }
         },
         // eslint-disable-next-line no-unused-vars
-        async updateDriver({commit}, driver) {
+        async update({commit}, object) {
             try {
-                const response = await fetch(`http://localhost:8081/api/drivers`, {
+                let objectType = '';
+                if (object.constructorId) {
+                    objectType = 'constructor';
+                } else if (object.driverId) {
+                    objectType = 'driver';
+                } else {
+                    throw new Error('Object type not recognized');
+                }
+
+                const body = {
+                    fullName: object.fullName,
+                    country: object.country,
+                    fantasyPoints: object.fantasyPoints,
+                    fantasyPrice: object.fantasyPrice,
+                    active: object.active,
+                };
+                if (objectType === 'driver') {
+                    body.driverId = object.driverId;
+                    body.points = object.points;
+                } else if (objectType === 'constructor') {
+                    body.constructorId = object.constructorId;
+                }
+                const response = await fetch(`http://localhost:8081/api/${objectType}s`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        driverId: driver.driverId,
-                        fullName: driver.fullName,
-                        points: driver.points,
-                        fantasyPoints: driver.fantasyPoints,
-                        fantasyPrice: driver.fantasyPrice,
-                        active: driver.active,
-                    }),
+                    body: JSON.stringify(body),
                 });
                 if (response.ok) {
+                    console.log("Updated " + object.fullName);
                     return true;
                 }
             } catch (error) {
                 console.error(error);
             }
+            console.warn("Failed to update: " + object.fullName);
             return false;
         },
         // eslint-disable-next-line no-unused-vars
-        async updateConstructor({commit}, constructor) {
+        async add({commit}, object) {
+            const objectType = object.constructorId ? 'driver' : 'constructor';
             try {
-                const response = await fetch(`http://localhost:8081/api/constructors`, {
-                    method: 'PUT',
+                const body = {
+                    fullName: object.fullName,
+                    shortName: object.shortName,
+                    country: object.country,
+                    fantasyPrice: object.fantasyPrice,
+                    active: object.active,
+                };
+                if (objectType === 'driver') {
+                    body.constructorId = object.constructorId;
+                    body.carNumber = object.carNumber;
+                }
+                const response = await fetch(`http://localhost:8081/api/${objectType}s`, {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        constructorId: constructor.constructorId,
-                        fullName: constructor.fullName,
-                        fantasyPoints: constructor.fantasyPoints,
-                        fantasyPrice: constructor.fantasyPrice,
-                    }),
+                    body: JSON.stringify(body),
                 });
                 if (response.ok) {
+                    console.log("Added " + object.fullName, response);
+                    if (objectType === 'driver') {
+                        commit('addDriver', await response.json());
+                    } else if (objectType === 'constructor') {
+                        commit('addConstructor', await response.json());
+                    }
                     return true;
                 }
             } catch (error) {
                 console.error(error);
             }
+            console.warn("Failed to add " + objectType + ": " + object.fullName);
             return false;
         }
     },
