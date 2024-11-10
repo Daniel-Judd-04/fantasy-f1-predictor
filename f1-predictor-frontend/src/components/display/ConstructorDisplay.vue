@@ -28,9 +28,9 @@ export default {
 </script>
 
 <template>
-  <div
-      class="tw-w-56 tw-h-18 tw-text-f1-white tw-bg-gradient-to-bl tw-from-primary-dark tw-border-1 tw-border-primary-light tw-rounded hover-parent tw-flex tw-flex-col tw-justify-between"
-      :class="[`tw-to-team-${constructor.shortName}`]">
+  <div v-if="constructor.active"
+       class="tw-w-56 tw-h-18 tw-text-f1-white tw-bg-gradient-to-bl tw-from-primary-dark tw-border-1 tw-border-primary-light tw-rounded hover-parent tw-flex tw-flex-col tw-justify-between"
+       :class="[`tw-to-team-${constructor.shortName}`]">
     <div class="tw-flex tw-flex-row tw-gap-2 tw-items-center tw-font-medium tw-px-1">
       <div
           class="flag-frame  tw-border-1 tw-border-f1-white tw-overflow-hidden tw-my-1 tw-h-5 tw-align-middle tw-rounded">
@@ -50,7 +50,7 @@ export default {
         </div>
       </div>
     </div>
-    <div class="tw-bg-primary-dark tw-w-full tw-h-full tw-flex tw-flex-row tw-gap-2 tw-items-center tw-px-2">
+    <div class="tw-bg-primary-dark tw-w-full tw-h-full tw-flex tw-flex-row tw-gap-2 tw-items-center tw-pl-2 tw-pr-1">
       <div
           class="tw-h-full tw-text-left tw-text-xs tw-flex tw-flex-col tw-place-content-between tw-py-1">
         <div v-for="driverId in constructor.drivers" :key="driverId">
