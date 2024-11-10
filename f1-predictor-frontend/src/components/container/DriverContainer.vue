@@ -14,8 +14,11 @@ export default {
   methods: {
     getFlagURL,
     edit(driver) {
-      this.$emit('edit', driver, this.allDrivers);
+      this.$emit('editObject', driver, this.allDrivers);
     },
+    editDrivers() {
+      this.$emit('editArray', this.allDrivers);
+    }
   },
 };
 
@@ -25,7 +28,7 @@ export default {
   <div class="tw-flex tw-flex-col tw-h-full tw-gap-2">
     <div class="hover-parent tw-border-primary-light tw-text-f1-white tw-relative tw-flex tw-flex-row tw-justify-center tw-items-center">
       <div class="tw-font-medium tw-text-xl">Drivers</div>
-      <ContinueButton class="hover-child tw-absolute tw-right-0 tw-h-8">
+      <ContinueButton @continue="editDrivers" class="hover-child tw-absolute tw-right-0 tw-h-8">
         Edit
       </ContinueButton>
     </div>

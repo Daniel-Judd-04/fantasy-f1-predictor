@@ -32,10 +32,9 @@ export default {
         Edit
       </ContinueButton>
     </div>
-    <div class="tw-flex tw-flex-col tw-h-full tw-justify-between">
+    <div class="tw-flex tw-flex-col tw-h-full tw-justify-between" :key="allConstructors.length">
       <ConstructorDisplay @edit="editConstructor" v-for="constructor in allConstructors" :key="constructor.code"
-                          :constructor="constructor"
-                          :flagURL="getFlagURL(constructor.country)"/>
+                          :constructor="constructor" :flagURL="getFlagURL(constructor.country)"/>
     </div>
   </div>
 </template>

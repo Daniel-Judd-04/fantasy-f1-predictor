@@ -21,10 +21,8 @@ export default {
     startIndex: {
       immediate: true,
       handler() {
-        console.log('Start index changed to', this.startIndex);
         this.currentIndex = this.startIndex;
-        // This is not working as element is not yet rendered
-        this.scrollToGrandPrix(this.currentIndex);
+        this.scrollToGrandPrix(this.currentIndex, false);
       }
     },
   },
@@ -32,12 +30,11 @@ export default {
     ...mapGetters(['allGrandsPrix']),
   },
   methods: {
-    scrollToGrandPrix(newIndex) {
+    scrollToGrandPrix(newIndex, smooth = true) {
       const element = document.getElementById(`grand-prix-${newIndex}`);
-      console.log('Scrolling to', element, 'at index', newIndex);
       if (element) {
         element.scrollIntoView({
-          behavior: 'smooth',
+          behavior: smooth ? 'smooth' : 'auto',
           block: 'nearest',
           inline: 'center',
         });
@@ -57,7 +54,7 @@ export default {
 
 <template>
   <div v-if="allGrandsPrix"
-       class="tw-relative tw-w-full tw-h-64 tw-py-2 tw-border-2 tw-border-primary-light tw-bg-f1-black tw-rounded-xl tw-overflow-hidden">
+       class="tw-relative tw-w-full tw-h-64 tw-border-2 tw-border-primary-light tw-bg-f1-black tw-rounded-lg tw-overflow-hidden">
     <div class="tw-w-full tw-h-full tw-py-2 tw-overflow-hidden tw-relative">
       <div
           class="tw-w-fit tw-px-full tw-h-full tw-flex tw-flex-row tw-gap-2 tw-overflow-hidden tw-scroll-smooth">
@@ -67,14 +64,14 @@ export default {
       </div>
     </div>
     <div
-        class="tw-absolute tw-flex tw-justify-center tw-flex-col tw-left-0 tw-top-0 tw-h-full tw-ml-2 tw-text-f1-white">
-      <ContinueButton @continue="switchGrandPrix(this.currentIndex - 1)" class="tw-h-full tw-my-2 tw-backdrop-blur-xl">
+        class="tw-absolute tw-flex tw-justify-center tw-flex-col tw-left-0 tw-top-0 tw-h-full tw-ml-1 tw-text-f1-white">
+      <ContinueButton @continue="switchGrandPrix(this.currentIndex - 1)" class="tw-h-full tw-my-1 tw-backdrop-blur-xl">
         <span class="material-icons">keyboard_arrow_left</span>
       </ContinueButton>
     </div>
     <div
-        class="tw-absolute tw-flex tw-justify-center tw-flex-col tw-right-0 tw-top-0 tw-h-full tw-mr-2 tw-text-f1-white">
-      <ContinueButton @continue="switchGrandPrix(this.currentIndex + 1)" class="tw-h-full tw-my-2 tw-backdrop-blur-xl">
+        class="tw-absolute tw-flex tw-justify-center tw-flex-col tw-right-0 tw-top-0 tw-h-full tw-mr-1 tw-text-f1-white">
+      <ContinueButton @continue="switchGrandPrix(this.currentIndex + 1)" class="tw-h-full tw-my-1 tw-backdrop-blur-xl">
         <span class="material-icons">keyboard_arrow_right</span>
       </ContinueButton>
     </div>
