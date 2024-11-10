@@ -10,3 +10,14 @@ databaseChangeLog:
                   name: active
                   type: BOOLEAN
                   defaultValueBoolean: true
+  - changeSet:
+      id: add_active_to_constructor_table
+      author: Daniel_Judd
+      changes:
+        - addColumn:
+            tableName: constructor
+            columns:
+              - column:
+                  name: active
+                  type: bit
+                  defaultValueBoolean: true
