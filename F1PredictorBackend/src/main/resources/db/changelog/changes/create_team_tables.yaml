@@ -1,0 +1,178 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_user_table
+      author: Daniel_Judd
+      changes:
+        - createTable:
+            tableName: user
+            columns:
+              - column:
+                  name: user_id
+                  type: INT UNSIGNED AUTO_INCREMENT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: create_team_table
+      author: Daniel_Judd
+      changes:
+        - createTable:
+            tableName: team
+            columns:
+              - column:
+                  name: user_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: grand_prix_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: full_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cost_cap
+                  type: DECIMAL(5,1) # 5 digits, 1 decimal places (e.g. £9999.9m)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: free_transfers
+                  type: TINYINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: active_chip
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: true
+        - addPrimaryKey:
+            tableName: team
+            columnNames: user_id, grand_prix_id
+            constraintName: pk_team
+        - addForeignKeyConstraint:
+            baseTableName: team
+            baseColumnNames: user_id
+            constraintName: fk_team_user
+            referencedTableName: user
+            referencedColumnNames: user_id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: team
+            baseColumnNames: grand_prix_id
+            constraintName: fk_team_grand_prix
+            referencedTableName: grand_prix
+            referencedColumnNames: grand_prix_id
+            onDelete: CASCADE
+  - changeSet:
+      id: create_team_drivers_table
+      author: Daniel_Judd
+      changes:
+        - createTable:
+            tableName: team_drivers
+            columns:
+              - column:
+                  name: user_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: grand_prix_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: driver_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: team_drivers
+            columnNames: user_id, grand_prix_id, driver_id
+            constraintName: pk_team_drivers
+        - addForeignKeyConstraint:
+            baseTableName: team_drivers
+            baseColumnNames: user_id
+            constraintName: fk_team_drivers_user
+            referencedTableName: user
+            referencedColumnNames: user_id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: team_drivers
+            baseColumnNames: grand_prix_id
+            constraintName: fk_team_drivers_grand_prix
+            referencedTableName: grand_prix
+            referencedColumnNames: grand_prix_id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: team_drivers
+            baseColumnNames: driver_id
+            constraintName: fk_team_drivers_driver
+            referencedTableName: driver
+            referencedColumnNames: driver_id
+            onDelete: CASCADE
+  - changeSet:
+      id: create_team_constructors_table
+      author: Daniel_Judd
+      changes:
+        - createTable:
+            tableName: team_constructors
+            columns:
+              - column:
+                  name: user_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: grand_prix_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: constructor_id
+                  type: INT UNSIGNED
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: team_constructors
+            columnNames: user_id, grand_prix_id, constructor_id
+            constraintName: pk_team_constructors
+        - addForeignKeyConstraint:
+            baseTableName: team_constructors
+            baseColumnNames: user_id
+            constraintName: fk_team_constructors_user
+            referencedTableName: user
+            referencedColumnNames: user_id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: team_constructors
+            baseColumnNames: grand_prix_id
+            constraintName: fk_team_constructors_grand_prix
+            referencedTableName: grand_prix
+            referencedColumnNames: grand_prix_id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: team_constructors
+            baseColumnNames: constructor_id
+            constraintName: fk_team_constructors_constructor
+            referencedTableName: constructor
+            referencedColumnNames: constructor_id
+            onDelete: CASCADE
