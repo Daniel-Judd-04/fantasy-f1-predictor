@@ -7,6 +7,7 @@ export default createStore({
         constructors: [],
         circuits: [],
         grandsPrix: [],
+        userTeams: [],
     },
     mutations: {
         setDrivers(state, drivers) {
@@ -20,6 +21,9 @@ export default createStore({
         },
         setGrandsPrix(state, grandsPrix) {
             state.grandsPrix = grandsPrix;
+        },
+        setUserTeams(state, userTeams) {
+            state.userTeams = userTeams;
         },
         addDriver(state, driver) {
             state.drivers.push(driver);
@@ -79,6 +83,18 @@ export default createStore({
 
                 commit('setGrandsPrix', grandsPrix);
                 console.log('Grands Prix', grandsPrix);
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async fetchUserTeams({commit}) {
+            try {
+                const response = await fetch(`http://localhost:8081/api/teams/user`);
+                if (!response.ok) throw new Error("Failed to fetch user teams");
+                let userTeams = await response.json();
+
+                commit('setUserTeams', userTeams);
+                console.log('User Teams', userTeams);
             } catch (error) {
                 console.error(error);
             }
@@ -175,6 +191,9 @@ export default createStore({
         },
         allGrandsPrix(state) {
             return state.grandsPrix;
+        },
+        userTeams(state) {
+            return state.userTeams;
         },
     },
 });

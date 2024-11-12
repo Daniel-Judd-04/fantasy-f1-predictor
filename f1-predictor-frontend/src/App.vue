@@ -8,13 +8,24 @@
       </div>
       <div class="tw-h-64 tw-flex tw-flex-row tw-gap-2">
         <GrandPrixContainer :start-index="nextRaceIndex"/>
-        <div class="tw-min-w-1/3 tw-w-1/3 tw-bg-primary-dark tw-border-primary-light tw-border-2 tw-rounded-xl">
-          <div class="tw-w-96">
-
+        <TeamDisplay :team="currentTeam"/>
+      </div>
+      <div
+          class="tw-w-full tw-h-full tw-flex tw-flex-col tw-bg-gradient-to-bl tw-to-f1-red tw-from-primary-dark tw-to-200% tw-border-primary-light tw-border-2 tw-rounded-lg">
+        <div class="tw-flex tw-border-b-1 tw-border-primary-light tw-p-2 tw-text-f1-white">
+          <div class="tw-font-bold tw-mt-0.5 tw-text-xl tw-mr-auto">
+            Recommended Fantasy Teams
+          </div>
+          <div class="tw-flex tw-items-center">
+            <span class="material-icons">tune</span>
           </div>
         </div>
-      </div>
-      <div class="tw-w-full tw-h-full tw-bg-primary-dark tw-border-primary-light tw-border-2 tw-rounded-xl">
+        <div class="tw-flex tw-flex-col tw-gap-2 tw-p-2 tw-bg-primary-dark tw-rounded-b-lg tw-h-full">
+          <div class="tw-text-f1-white" v-if="userTeams">
+            Loading...
+          </div>
+          <CompactTeamDisplay v-for="team in userTeams" :key="team.code" :team="team"/>
+        </div>
       </div>
     </div>
 
@@ -30,6 +41,8 @@ import {mapActions, mapGetters} from "vuex";
 import ConstructorContainer from "@/components/container/ConstructorContainer.vue";
 import GrandPrixContainer from "@/components/container/GrandPrixContainer.vue";
 import OverlayContainer from "@/components/overlay/OverlayContainer.vue";
+import TeamDisplay from "@/components/display/TeamDisplay.vue";
+import CompactTeamDisplay from "@/components/display/CompactTeamDisplay.vue";
 
 export default {
   name: 'App',
@@ -38,6 +51,7 @@ export default {
     await this.fetchConstructors();
     await this.fetchCircuits();
     await this.fetchGrandsPrix();
+    await this.fetchUserTeams();
   },
   data() {
     return {
@@ -45,6 +59,7 @@ export default {
       overlayArray: [],
       overlayIndex: 0,
       showOverlay: false,
+      currentTeam: {},
     }
   },
   watch: {
@@ -57,10 +72,13 @@ export default {
           }
         }
       });
+    },
+    userTeams() {
+      this.currentTeam = this.userTeams[0];
     }
   },
   methods: {
-    ...mapActions(['fetchDrivers', 'fetchConstructors', 'fetchCircuits', 'fetchGrandsPrix']),
+    ...mapActions(['fetchDrivers', 'fetchConstructors', 'fetchCircuits', 'fetchGrandsPrix', 'fetchUserTeams']),
     editObject(target, array) {
       for (let i = 0; i < array.length; i++) {
         if (array[i] === target) {
@@ -83,9 +101,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['allGrandsPrix']),
+    ...mapGetters(['allGrandsPrix', 'userTeams']),
   },
   components: {
+    CompactTeamDisplay,
+    TeamDisplay,
     OverlayContainer,
     GrandPrixContainer,
     DriverContainer,
