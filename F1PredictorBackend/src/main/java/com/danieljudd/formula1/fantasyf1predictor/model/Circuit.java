@@ -1,13 +1,17 @@
 package com.danieljudd.formula1.fantasyf1predictor.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,8 +29,7 @@ public class Circuit {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int circuitId;
-
-
+  
   @Column(unique = true)
   private String fullName;
   private String locationName;
@@ -38,6 +41,10 @@ public class Circuit {
   private byte corners;
   private byte laps;
   private byte drsZones;
+
+  @JsonIdentityReference(alwaysAsId = true)
+  @OneToMany(mappedBy = "circuit", orphanRemoval = true)
+  private List<GrandPrix> grandsPrix = new ArrayList<>();
 
   /**
    * Constructor for Circuit
