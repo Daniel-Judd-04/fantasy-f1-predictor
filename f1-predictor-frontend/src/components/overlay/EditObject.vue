@@ -111,7 +111,7 @@ export default {
       if (await this.$store.dispatch('update', this.getProperty)) {
         this.$emit('success');
       } else {
-        console.warn('Failed to save data');
+        this.$emit('error');
       }
     },
     async close() {

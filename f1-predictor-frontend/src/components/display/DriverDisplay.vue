@@ -34,7 +34,7 @@ export default {
     <div :class="[`${driver.active ? '' : 'tw-text-primary-light'}`]"
          class="tw-flex tw-w-full tw-gap-2 tw-items-center tw-justify-center tw-font-medium tw-px-1 tw-text-left">
       <div v-if="showFlag" :class="[`tw-opacity-${driver.active ? '100' : '50'}`]"
-           class="flag-frame tw-border-1 tw-overflow-hidden tw-h-5 tw-align-middle tw-border-f1-white tw-rounded">
+           class="flag-frame tw-border-1 tw-overflow-hidden tw-h-5 tw-my-1 tw-align-middle tw-border-f1-white tw-rounded-sm">
         <img :src="flagURL" alt="Flag" class="flag-image"/>
       </div>
       <div class="tw-mt-0.5">
