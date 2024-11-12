@@ -1,0 +1,133 @@
+databaseChangeLog:
+  - changeSet:
+      id: remove_user_table
+      author: Daniel_Judd
+      changes:
+        - dropAllForeignKeyConstraints:
+            baseTableName: team
+        - dropForeignKeyConstraint:
+            baseTableName: team_drivers
+            constraintName: fk_team_drivers_user
+        - dropForeignKeyConstraint:
+            baseTableName: team_drivers
+            constraintName: fk_team_drivers_grand_prix
+        - dropForeignKeyConstraint:
+            baseTableName: team_constructors
+            constraintName: fk_team_constructors_user
+        - dropForeignKeyConstraint:
+            baseTableName: team_constructors
+            constraintName: fk_team_constructors_grand_prix
+        - dropTable:
+            tableName: user
+  - changeSet:
+      id: change_team_table
+      author: Daniel_Judd
+      changes:
+        - dropPrimaryKey:
+            tableName: team
+            constraintName: pk_team
+        - dropColumn:
+            tableName: team
+            columnName: user_id
+        - dropColumn:
+            tableName: team
+            columnName: grand_prix_id
+        - dropColumn:
+            tableName: team
+            columnName: full_name
+        - addColumn:
+            tableName: team
+            columns:
+              - column:
+                  name: team_name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: owner
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: team
+            columnNames: team_name, owner
+            constraintName: pk_team
+  - changeSet:
+      id: change_team_drivers_table
+      author: Daniel_Judd
+      changes:
+        - dropPrimaryKey:
+            tableName: team_drivers
+            constraintName: pk_team_drivers
+        - dropColumn:
+            tableName: team_drivers
+            columnName: user_id
+        - dropColumn:
+            tableName: team_drivers
+            columnName: grand_prix_id
+        - addColumn:
+            tableName: team_drivers
+            columns:
+              - column:
+                  name: team_name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: owner
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: team_drivers
+            columnNames: team_name, owner
+            constraintName: pk_team_drivers
+  - changeSet:
+      id: change_team_constructors_table
+      author: Daniel_Judd
+      changes:
+        - dropPrimaryKey:
+            tableName: team_constructors
+            constraintName: pk_team_constructors
+        - dropColumn:
+            tableName: team_constructors
+            columnName: user_id
+        - dropColumn:
+            tableName: team_constructors
+            columnName: grand_prix_id
+        - addColumn:
+            tableName: team_constructors
+            columns:
+              - column:
+                  name: team_name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: owner
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: team_constructors
+            columnNames: team_name, owner
+            constraintName: pk_team_constructors
+  - changeSet:
+      id: change_team_column_names
+      author: Daniel_Judd
+      changes:
+        - renameColumn:
+            tableName: team
+            columnDataType: VARCHAR(50)
+            oldColumnName: team_name
+            newColumnName: name
+        - renameColumn:
+            tableName: team_drivers
+            columnDataType: VARCHAR(50)
+            oldColumnName: team_name
+            newColumnName: name
+        - renameColumn:
+            tableName: team_constructors
+            columnDataType: VARCHAR(50)
+            oldColumnName: team_name
+            newColumnName: name

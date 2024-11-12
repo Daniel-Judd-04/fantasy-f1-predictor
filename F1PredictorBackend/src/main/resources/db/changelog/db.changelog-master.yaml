@@ -9,3 +9,5 @@ databaseChangeLog:
       file: db/changelog/changes/add_active_to_driver_table.yaml
   - include:
       file: db/changelog/changes/create_team_tables.yaml
+  - include:
+      file: db/changelog/changes/remove_user_table.yaml
