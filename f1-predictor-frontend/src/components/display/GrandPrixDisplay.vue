@@ -88,6 +88,9 @@ export default {
     clearInterval(this.timer);
   },
   methods: {
+    round(value, decimals) {
+      return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+    },
     getRaceLength() {
       return Math.round(this.circuit.length * this.circuit.laps * 10) / 10;
     },
@@ -97,6 +100,9 @@ export default {
 
       for (let i = 0; i < locations.length; i++) {
         if (locations[i]) {
+          if (i === 1 && (locations[0].includes(locations[1]) || this.grandPrix.fullName.includes(locations[1]))) {
+            continue;
+          }
           location += locations[i];
           if (i < locations.length - 1) {
             location += ', ';
@@ -124,21 +130,21 @@ export default {
         <span class="material-symbols-outlined">sprint</span>
       </div>
     </div>
-    <div class="tw-w-full tw-h-full tw-bg-primary-dark tw-flex tw-flex-col tw-gap-2 tw-pt-2">
-      <div class="tw-flex tw-flex-row tw-h-full tw-px-2 tw-gap-2">
+    <div class="tw-w-full tw-h-full tw-bg-primary-dark tw-flex tw-flex-col tw-gap-2 tw-pt-1">
+      <div class="tw-flex tw-flex-row tw-h-full tw-px-1 tw-gap-1">
         <div class="tw-h-full tw-w-full tw-bg-f1-black tw-border-primary-light tw-border-1 tw-rounded"
              :class="[index === currentIndex ? '' : 'tw-opacity-50']">
           <!--IMAGE-->
         </div>
         <div
-            class="tw-font-thin tw-border-y-1 tw-border-primary-light tw-ml-auto tw-w-36 tw-text-xs tw-flex tw-flex-col tw-justify-around">
+            class="tw-font-thin tw-border-y-1 tw-border-primary-light tw-ml-auto tw-w-36 tw-text-sm tw-flex tw-flex-col tw-justify-around">
           <div class="tw-flex">
             <div>Length:</div>
-            <div class="tw-ml-auto">{{ circuit.length }}km</div>
+            <div class="tw-ml-auto">{{ round(circuit.length, 2) }}<span class="tw-text-xs">km</span></div>
           </div>
           <div class="tw-flex">
             <div>Race:</div>
-            <div class="tw-ml-auto">{{ getRaceLength() }}km</div>
+            <div class="tw-ml-auto">{{ round(getRaceLength(), 0) }}<span class="tw-text-xs">km</span></div>
           </div>
           <div class="tw-flex">
             <div>Laps:</div>
@@ -155,24 +161,24 @@ export default {
         </div>
       </div>
 
-      <div v-if="!inFuture" class="tw-flex tw-h-8 tw-flex-row tw-justify-around tw-items-center tw-pb-1">
-        <div class="tw-flex tw-items-center tw-gap-1">
+      <div v-if="!inFuture" class="tw-flex tw-h-8 tw-flex-row tw-justify-between tw-px-2 tw-items-center tw-pb-1">
+        <div class="tw-flex tw-items-center tw-gap-0.5">
           <span class="material-symbols-outlined">heat</span>
-          <div>{{ grandPrix.airTemperature }}°C</div>
+          <div>{{ round(grandPrix.airTemperature, 0) }}<span class="tw-text-xs">°C</span></div>
         </div>
-        <div class="tw-flex tw-items-center tw-gap-1">
+        <div class="tw-flex tw-items-center tw-gap-0.5">
           <span class="material-symbols-outlined">road</span>
-          <div>{{ grandPrix.trackTemperature }}°C</div>
+          <div>{{ round(grandPrix.trackTemperature, 0) }}<span class="tw-text-xs">°C</span></div>
         </div>
-        <div class="tw-flex tw-items-center tw-gap-1">
+        <div class="tw-flex tw-items-center tw-gap-0.5">
           <span class="material-symbols-outlined">water_do</span>
-          <div>{{ grandPrix.humidity }}%</div>
+          <div>{{ round(grandPrix.humidity, 0) }}<span class="tw-text-xs">%</span></div>
         </div>
-        <div class="tw-flex tw-items-center tw-gap-1">
+        <div class="tw-flex tw-items-center tw-gap-0.5">
           <span class="material-symbols-outlined">air</span>
-          <div>{{ grandPrix.windSpeed }} mph</div>
+          <div>{{ round(grandPrix.windSpeed, 1) }}<span class="tw-text-xs">mph</span></div>
         </div>
-        <div class="tw-flex tw-items-center tw-gap-1">
+        <div class="tw-flex tw-items-center tw-gap-0.5">
           <span class="material-symbols-outlined">rainy_light</span>
           <div>{{ grandPrix.rainfall ? 'Yes' : 'No' }}</div>
         </div>
