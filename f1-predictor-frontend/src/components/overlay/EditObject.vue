@@ -7,7 +7,7 @@ import UserInput from "@/components/common/UserInput.vue";
 export default {
   name: 'EditObject',
   props: {
-    objectArray: {
+    overlayArray: {
       type: Array,
       required: true,
     },
@@ -19,7 +19,7 @@ export default {
   data() {
     return {
       currentIndex: this.startIndex,
-      tempActiveStatus: this.objectArray[this.startIndex].active,
+      tempActiveStatus: this.overlayArray[this.startIndex].active,
     }
   },
   watch: {
@@ -27,26 +27,26 @@ export default {
       immediate: true,
       handler() {
         this.currentIndex = this.startIndex;
-        this.tempActiveStatus = this.objectArray[this.startIndex].active;
+        this.tempActiveStatus = this.overlayArray[this.startIndex].active;
       }
     },
     currentIndex: {
       immediate: true,
       handler() {
-        this.tempActiveStatus = this.objectArray[this.currentIndex].active;
+        this.tempActiveStatus = this.overlayArray[this.currentIndex].active;
       }
     }
   },
   components: {UserInput, CloseButton, ContinueButton},
   computed: {
     isLoaded() {
-      return this.objectArray.length > 0;
+      return this.overlayArray.length > 0;
     },
     getProperty() {
       if (!this.isLoaded) {
         return {};
       }
-      return this.objectArray[this.currentIndex];
+      return this.overlayArray[this.currentIndex];
     },
     getTitle() {
       if (!this.isLoaded) {
@@ -173,7 +173,7 @@ export default {
         <span class="material-icons">arrow_back</span>
       </ContinueButton>
       <ContinueButton @continue="close">Save & Close</ContinueButton>
-      <ContinueButton @continue="next" :class="`${currentIndex < objectArray.length-1 ? '' : 'tw-invisible'}`">
+      <ContinueButton @continue="next" :class="`${currentIndex < overlayArray.length-1 ? '' : 'tw-invisible'}`">
         <span class="material-icons">arrow_forward</span>
       </ContinueButton>
     </div>

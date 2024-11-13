@@ -8,7 +8,7 @@ import {mapActions, mapGetters} from "vuex";
 export default {
   name: 'EditArray',
   props: {
-    objectArray: {
+    overlayArray: {
       type: Array,
       required: true,
     },
@@ -24,31 +24,31 @@ export default {
   computed: {
     ...mapGetters(['allDrivers', 'allConstructors']),
     isLoaded() {
-      return this.objectArray.length > 0;
+      return this.overlayArray.length > 0;
     },
     isDriver() {
       if (!this.isLoaded) {
         return false;
       }
-      return Object.prototype.hasOwnProperty.call(this.objectArray[0], 'driverId');
+      return Object.prototype.hasOwnProperty.call(this.overlayArray[0], 'driverId');
     },
     isConstructor() {
       if (!this.isLoaded) {
         return false;
       }
-      return Object.prototype.hasOwnProperty.call(this.objectArray[0], 'constructorId');
+      return Object.prototype.hasOwnProperty.call(this.overlayArray[0], 'constructorId');
     }
   },
   beforeMount() {
     // Set active status
-    for (let i = 0; i < this.objectArray.length; i++) {
+    for (let i = 0; i < this.overlayArray.length; i++) {
       let id;
       if (this.isDriver) {
-        id = this.objectArray[i].driverId;
+        id = this.overlayArray[i].driverId;
       } else {
-        id = this.objectArray[i].constructorId;
+        id = this.overlayArray[i].constructorId;
       }
-      this.tempActiveStatuses[id] = this.objectArray[i].active;
+      this.tempActiveStatuses[id] = this.overlayArray[i].active;
     }
   },
   methods: {
@@ -100,10 +100,10 @@ export default {
       }
 
       // Update any changes in active status
-      for (let i = 0; i < this.objectArray.length; i++) {
-        const id = this.isDriver ? this.objectArray[i].driverId : this.objectArray[i].constructorId;
-        if (this.objectArray[i].active !== this.tempActiveStatuses[id]) {
-          const clone = this.objectArray[i];
+      for (let i = 0; i < this.overlayArray.length; i++) {
+        const id = this.isDriver ? this.overlayArray[i].driverId : this.overlayArray[i].constructorId;
+        if (this.overlayArray[i].active !== this.tempActiveStatuses[id]) {
+          const clone = this.overlayArray[i];
           clone.active = this.tempActiveStatuses[id];
           await this.$store.dispatch('update', clone);
         }
@@ -111,11 +111,11 @@ export default {
 
       // Update sorting method
       if (document.getElementById('sort-by-points').checked) {
-        sort(this.objectArray, 'points');
+        sort(this.overlayArray, 'points');
       } else if (document.getElementById('sort-by-fantasyPoints').checked) {
-        sort(this.objectArray, 'fantasyPoints');
+        sort(this.overlayArray, 'fantasyPoints');
       } else if (document.getElementById('sort-by-fantasyPrice').checked) {
-        sort(this.objectArray, 'fantasyPrice');
+        sort(this.overlayArray, 'fantasyPrice');
       }
     },
     async close() {

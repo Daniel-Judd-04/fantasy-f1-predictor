@@ -1,16 +1,25 @@
 <script>
 import EditObject from "@/components/overlay/EditObject.vue";
 import EditArray from "@/components/overlay/EditArray.vue";
+import ShowGraph from "@/components/overlay/ShowGraph.vue";
 
 export default {
   name: 'OverlayContainer',
   props: {
-    objectArray: {
+    overlayArray: {
       type: Array,
       required: true,
     },
-    startIndex: { // -1 for array editing rather than a specific index
+    overlayObject: {
+      type: Object,
+      required: true,
+    },
+    startIndex: {
       type: Number,
+      required: true,
+    },
+    overlayType: {
+      type: String,
       required: true,
     }
   },
@@ -20,10 +29,10 @@ export default {
       error: false,
     }
   },
-  components: {EditObject, EditArray},
+  components: {ShowGraph, EditObject, EditArray},
   computed: {
     isLoaded() {
-      return this.objectArray.length > 0;
+      return this.overlayArray.length > 0 || this.overlayObject !== {};
     },
   },
   methods: {
@@ -64,10 +73,12 @@ export default {
       </div>
     </div>
     <div class="tw-flex tw-w-full tw-h-full tw-justify-center tw-items-center">
-      <EditObject v-if="isLoaded && startIndex !== -1" :objectArray="objectArray" :startIndex="startIndex"
+      <EditObject v-if="isLoaded && overlayType === 'EditObject'" :overlayArray="overlayArray" :startIndex="startIndex"
                   @exit="exit" @success="showSuccessMessage" @error="showErrorMessage"/>
-      <EditArray v-else-if="isLoaded" :objectArray="objectArray"
+      <EditArray v-else-if="isLoaded && overlayType === 'EditArray'" :overlayArray="overlayArray"
                  @exit="exit" @success="showSuccessMessage" @error="showErrorMessage"/>
+      <ShowGraph v-else-if="isLoaded && overlayType === 'ShowGraph'" :overlayObject="overlayObject"
+                 @exit="exit"/>
     </div>
   </div>
 </template>
