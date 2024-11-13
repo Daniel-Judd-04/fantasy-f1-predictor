@@ -23,6 +23,9 @@ export default {
     edit() {
       this.$emit('edit', this.constructor);
     },
+    graph() {
+      this.$emit('graph', this.constructor);
+    },
   }
 };
 </script>
@@ -32,8 +35,8 @@ export default {
        class="tw-w-56 tw-h-18 tw-text-f1-white tw-bg-gradient-to-bl tw-from-primary-dark tw-border-1 tw-border-primary-light tw-rounded hover-parent tw-flex tw-flex-col tw-justify-between"
        :class="[`tw-to-team-${constructor.shortName}`]">
     <div class="tw-flex tw-flex-row tw-gap-2 tw-items-center tw-font-medium tw-px-1">
-      <div
-          class="flag-frame tw-border-1 tw-border-f1-white tw-overflow-hidden tw-my-1 tw-h-5 tw-align-middle tw-rounded-sm">
+      <div :title="constructor.country"
+           class="flag-frame tw-border-1 tw-border-f1-white tw-overflow-hidden tw-my-1 tw-h-5 tw-align-middle tw-rounded-sm">
         <img :src="flagURL" alt="Flag" class="flag-image"/>
       </div>
       <div>
@@ -43,10 +46,13 @@ export default {
         <div class="not-hover-child tw-text-right tw-absolute tw-w-full tw-h-full">
           {{ constructor.fantasyPoints }}
         </div>
-        <div
-            class="hover-child tw-absolute tw-transition-opacity tw-w-full tw-h-full tw-flex tw-items-center tw-justify-end ">
-          <span @click="edit"
-                class="material-icons tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center tw-cursor-pointer">tune</span>
+        <div class="tw-absolute tw-w-full tw-h-full tw-flex tw-gap-2 tw-items-center tw-justify-end">
+          <div class="hover-child tw-transition-opacity tw-cursor-pointer tw-w-5 tw-h-5" title="Show Driver Graph">
+            <span @click="graph()" class="material-symbols-outlined tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center">bar_chart</span>
+          </div>
+          <div class="hover-child tw-transition-opacity tw-cursor-pointer tw-w-5 tw-h-5" title="Edit Driver">
+            <span @click="edit()" class="material-symbols-outlined tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center">tune</span>
+          </div>
         </div>
       </div>
     </div>

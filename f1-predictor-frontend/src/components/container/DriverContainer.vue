@@ -16,6 +16,9 @@ export default {
     edit(driver) {
       this.$emit('editObject', driver, this.allDrivers);
     },
+    graph(driver) {
+      this.$emit('showGraph', driver);
+    },
     editDrivers() {
       this.$emit('editArray', this.allDrivers);
     }
@@ -33,7 +36,7 @@ export default {
       </ContinueButton>
     </div>
     <div class="tw-flex tw-flex-col tw-h-full tw-justify-between">
-      <DriverDisplay @edit="edit" v-for="driver in allDrivers" :key="driver.code" :driver="driver"
+      <DriverDisplay @graph="graph" @edit="edit" v-for="driver in allDrivers" :key="driver.code" :driver="driver"
                      :flagURL="getFlagURL(driver.country)"/>
     </div>
   </div>

@@ -13,8 +13,11 @@ export default {
   },
   methods: {
     getFlagURL,
-    editConstructor(constructor) {
+    edit(constructor) {
       this.$emit('editObject', constructor, this.allConstructors);
+    },
+    graph(constructor) {
+      this.$emit('showGraph', constructor);
     },
     editConstructors() {
       this.$emit('editArray', this.allConstructors);
@@ -33,7 +36,7 @@ export default {
       </ContinueButton>
     </div>
     <div class="tw-flex tw-flex-col tw-h-full tw-justify-between" :key="allConstructors.length">
-      <ConstructorDisplay @edit="editConstructor" v-for="constructor in allConstructors" :key="constructor.code"
+      <ConstructorDisplay @edit="edit" @graph="graph" v-for="constructor in allConstructors" :key="constructor.code"
                           :constructor="constructor" :flagURL="getFlagURL(constructor.country)"/>
     </div>
   </div>
