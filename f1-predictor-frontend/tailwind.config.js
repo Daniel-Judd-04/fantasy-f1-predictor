@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const plugin = require('tailwindcss/plugin');
+
 module.exports = {
     prefix: 'tw-',
     content: [
@@ -60,6 +62,23 @@ module.exports = {
             }
         },
     },
-    plugins: [],
-}
+    plugins: [
+        plugin(function ({addBase, theme}) {
+            const colors = theme('colors');
+            const variables = Object.entries(colors).reduce((acc, [key, value]) => {
+                if (typeof value === 'string') {
+                    acc[`--color-${key}`] = value;
+                } else {
+                    Object.entries(value).forEach(([shade, shadeValue]) => {
+                        acc[`--color-${key}-${shade}`] = shadeValue;
+                    });
+                }
+                return acc;
+            }, {});
 
+            addBase({
+                ':root': variables,
+            });
+        }),
+    ],
+}

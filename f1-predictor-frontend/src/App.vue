@@ -1,7 +1,7 @@
 <template>
   <div id="app"
        class="tw-h-screen tw-w-screen tw-bg-f1-black tw-flex tw-flex-row tw-justify-between tw-gap-2 tw-p-1 tw-select-none">
-    <ConstructorContainer @editObject="editObject" @editArray="editArray"/>
+    <ConstructorContainer @showGraph="showGraph" @editObject="editObject" @editArray="editArray"/>
     <div class="tw-w-full tw-h-full tw-flex tw-flex-col tw-gap-2 tw-overflow-hidden">
       <div class="tw-h-8 tw-text-xl tw-font-extrabold tw-text-f1-white">
         Fantasy F1 Predictor v2
@@ -29,10 +29,10 @@
       </div>
     </div>
 
-    <DriverContainer @editObject="editObject" @editArray="editArray"/>
+    <DriverContainer @showGraph="showGraph" @editObject="editObject" @editArray="editArray"/>
   </div>
-  <OverlayContainer @exit="closeOverlay()" v-if="showOverlay"
-                    :object-array="overlayArray" :start-index="overlayIndex"/>
+  <OverlayContainer @exit="closeOverlay()" v-if="showOverlay" :overlay-object="overlayObject"
+                    :overlay-array="overlayArray" :start-index="overlayIndex" :overlay-type="overlayType"/>
 </template>
 
 <script>
@@ -58,6 +58,8 @@ export default {
       nextRaceIndex: 0,
       overlayArray: [],
       overlayIndex: 0,
+      overlayType: '',
+      overlayObject: {},
       showOverlay: false,
       currentTeam: {},
     }
@@ -79,6 +81,12 @@ export default {
   },
   methods: {
     ...mapActions(['fetchDrivers', 'fetchConstructors', 'fetchCircuits', 'fetchGrandsPrix', 'fetchUserTeams']),
+    showGraph(target) {
+      this.overlayObject = target;
+      this.overlayType = 'ShowGraph';
+
+      this.showOverlay = true;
+    },
     editObject(target, array) {
       for (let i = 0; i < array.length; i++) {
         if (array[i] === target) {
@@ -87,17 +95,23 @@ export default {
         }
       }
       this.overlayArray = array;
+      this.overlayType = 'EditObject';
+
       this.showOverlay = true;
     },
     editArray(array) {
-      this.overlayIndex = -1;
       this.overlayArray = array;
+      this.overlayType = 'EditArray';
+
       this.showOverlay = true;
     },
     closeOverlay() {
       this.showOverlay = false;
+
       this.overlayArray = [];
+      this.overlayObject = {};
       this.overlayIndex = 0;
+      this.overlayType = '';
     }
   },
   computed: {

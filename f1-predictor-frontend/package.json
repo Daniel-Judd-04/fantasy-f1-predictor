@@ -10,9 +10,13 @@
     "dev": "concurrently \"npm run serve\" \"npm run backend\""
   },
   "dependencies": {
+    "@primevue/themes": "^4.2.1",
     "axios": "^1.7.7",
+    "chart.js": "^4.4.6",
+    "colord": "^2.9.3",
     "core-js": "^3.8.3",
     "date-fns": "^4.1.0",
+    "primevue": "^4.2.1",
     "vue": "^3.2.13",
     "vuex": "^4.1.0"
   },
