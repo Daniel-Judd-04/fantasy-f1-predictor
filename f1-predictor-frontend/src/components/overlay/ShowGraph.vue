@@ -2,7 +2,6 @@
 import {mapGetters} from "vuex";
 import CloseButton from "@/components/common/CloseButton.vue";
 import {getConstructor} from "@/utils/common";
-import {Chart as ChartJS} from "chart.js";
 
 function getTailwindColor(varName) {
   return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
@@ -22,13 +21,17 @@ export default {
     getChartData() {
 
       let labels = [];
-      let pointsPerRace = [12, 25, 0, 8, 12, 26, 13, 0, 2]; // Example data
-      let cumulativePoints = [];
       for (let i = 0; i <= this.allGrandsPrix.length; i++) {
         labels.push(`Race ${i + 1}`);
         // pointsPerRace.push(this.overlayObject.results.)
       }
 
+      let pointsPerRace = [];
+      for (let i = 0; i < this.overlayObject.raceResults.length; i++) {
+        pointsPerRace.push(this.convertResultToPoints(this.overlayObject.raceResults[i]));
+      }
+
+      let cumulativePoints = [];
       for (let i = 0; i < pointsPerRace.length; i++) {
         if (i === 0) {
           cumulativePoints.push(pointsPerRace[i]);
@@ -39,26 +42,27 @@ export default {
 
 
       const primaryLight = getTailwindColor('--color-primary-light');
-
+      // const white = getTailwindColor('--color-f1-white');
       return {
         labels: labels,
         datasets: [
           {
             label: 'Points Per Race',
             fill: false,
+            type: 'bar',
             borderColor: primaryLight,
-            borderWidth: 1,
+            borderWidth: 2,
             yAxisID: 'y',
-            tension: 0.4,
             data: pointsPerRace
           },
           {
             label: 'Cumulative Points',
-            fill: true,
+            fill: false,
+            type: 'line',
             borderColor: primaryLight,
             borderWidth: 2,
             yAxisID: 'y1',
-            tension: 0.4,
+            tension: 0,
             data: cumulativePoints
           }
         ]
@@ -73,10 +77,7 @@ export default {
         plugins: {
           legend: {
             display: false,
-          },
-          customLegend: {
-            position: 'left', // Custom plugin handles legend placement
-          },
+          }
         },
         scales: {
           x: {
@@ -102,6 +103,7 @@ export default {
           },
           y1: {
             suggestedMin: 0,
+            suggestedMax: 100,
             type: 'linear',
             display: true,
             position: 'right',
@@ -110,12 +112,8 @@ export default {
             },
             grid: {
               drawOnChartArea: false,
+              color: primary
             }
-          }
-        },
-        layout: {
-          padding: {
-            top: 30,
           }
         }
       };
@@ -127,41 +125,13 @@ export default {
       return 'team-' + this.overlayObject.shortName;
     },
   },
-  mounted() {
-    const white = getTailwindColor('--color-f1-white');
-    // Custom plugin definition
-    const customLegendPlugin = {
-      id: 'customLegend',
-      beforeDraw(chart) {
-        const {ctx} = chart;
-        const datasets = chart.data.datasets;
-
-        // Left axis (y)
-        const yLegend = datasets.find(dataset => dataset.yAxisID === 'y');
-        if (yLegend) {
-          ctx.save();
-          ctx.font = '12px Arial';
-          ctx.fillStyle = white;
-          ctx.fillText(yLegend.label, 0, chart.chartArea.top - 20);
-          ctx.restore();
-        }
-
-        // Right axis (y1)
-        const y1Legend = datasets.find(dataset => dataset.yAxisID === 'y1');
-        if (y1Legend) {
-          ctx.save();
-          ctx.font = '12px Arial';
-          ctx.fillStyle = white;
-          ctx.fillText(y1Legend.label, chart.width - 100, chart.chartArea.top - 20);
-          ctx.restore();
-        }
-      },
-    };
-
-    // Register the plugin locally for this chart instance
-    ChartJS.register(customLegendPlugin);
-  },
   methods: {
+    convertResultToPoints(result) {
+      if (result.position > 10) return 0;
+      const points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1]; // Verify this
+      console.log(result, points[result.position - 1], (result.fastestLap ? 1 : 0));
+      return points[result.position - 1] + (result.fastestLap ? 1 : 0);
+    },
     exit() {
       this.$emit('exit');
     }
@@ -171,7 +141,7 @@ export default {
 
 <template>
   <div :class="[`tw-to-${getGradientColour}`]"
-       class="tw-bg-primary-dark tw-w-1/2 tw-border-2 tw-border-primary-light tw-bg-gradient-to-bl tw-to-200% tw-from-primary-dark tw-drop-shadow-2xl tw-rounded-lg tw-flex tw-flex-col tw-text-f1-white">
+       class="tw-bg-primary-dark tw-w-1/2 tw-bg-gradient-to-bl tw-to-200% tw-from-primary-dark tw-drop-shadow-2xl tw-rounded-lg tw-flex tw-flex-col tw-text-f1-white">
     <div class="hover-parent tw-p-2 tw-flex tw-justify-center tw-items-center tw-gap-2">
       <div class="tw-text-2xl tw-font-bold tw-pl-2 tw-pt-0.5 tw-mr-auto">
         {{ overlayObject.fullName }}
@@ -180,7 +150,11 @@ export default {
         <span class="material-icons">close</span>
       </CloseButton>
     </div>
-    <div class="tw-bg-primary-dark tw-p-4 tw-rounded-b-lg">
+    <div class="tw-bg-primary-dark tw-border-t-1 tw-border-primary-light tw-p-4 tw-rounded-b-lg">
+      <div class="tw-flex tw-justify-between tw-text-sm">
+        <div>{{ getChartData.datasets[0].label }}</div>
+        <div>{{ getChartData.datasets[1].label }}</div>
+      </div>
       <CustomChart class="tw-h-96" type="line" :data="getChartData" :options="chartOptions"/>
     </div>
   </div>
