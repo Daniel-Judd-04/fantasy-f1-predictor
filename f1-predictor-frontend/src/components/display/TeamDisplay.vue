@@ -22,9 +22,6 @@ export default {
         <div class="tw-font-bold tw-text-xl">{{ team.teamName }}</div>
         <div>{{ team.teamOwner }}</div>
       </div>
-      <div v-if="team.activeChip !== 'None'" class="tw-h-full">
-        <span class="material-symbols-outlined tw-mt-1">sprint</span>
-      </div>
     </div>
     <div class="tw-h-3/4 tw-justify-between tw-flex tw-flex-col tw-gap-2 tw-bg-primary-dark tw-rounded-b-lg">
       <div class="tw-w-full tw-flex tw-px-2 tw-pt-1">
