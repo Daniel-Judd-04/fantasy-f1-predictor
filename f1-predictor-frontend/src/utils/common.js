@@ -59,6 +59,16 @@ export function getCircuitById(circuitId) {
     return mockCircuit;
 }
 
+export function getGrandPrix(grandPrixId) {
+    const grandsPrix = store.getters.allGrandsPrix;
+    for (const grandPrix of grandsPrix) {
+        if (grandPrix.grandPrixId === grandPrixId) {
+            return grandPrix;
+        }
+    }
+    return null;
+}
+
 export function sort(array, sortBy) {
     if (sortBy === 'points') {
         if (array[0].points) {
