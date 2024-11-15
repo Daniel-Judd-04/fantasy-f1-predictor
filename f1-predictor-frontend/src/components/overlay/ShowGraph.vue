@@ -1,7 +1,7 @@
 <script>
 import {mapGetters} from "vuex";
 import CloseButton from "@/components/common/CloseButton.vue";
-import {getConstructor} from "@/utils/common";
+import {getConstructor, getGrandPrix} from "@/utils/common";
 
 function getTailwindColor(varName) {
   return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
@@ -19,30 +19,28 @@ export default {
   computed: {
     ...mapGetters(['allGrandsPrix']),
     getChartData() {
+      const season = this.getLatestSeason();
+
+      const grandsPrix = Array.from(this.allGrandsPrix.filter(gp => gp.season === season)).sort((a, b) => a.round - b.round);
 
       let labels = [];
-      for (let i = 0; i <= this.allGrandsPrix.length; i++) {
-        labels.push(`Race ${i + 1}`);
-        // pointsPerRace.push(this.overlayObject.results.)
-      }
-
       let pointsPerRace = [];
-      for (let i = 0; i < this.overlayObject.raceResults.length; i++) {
-        pointsPerRace.push(this.convertResultToPoints(this.overlayObject.raceResults[i]));
-      }
-
+      let cumulativePoint = 0;
       let cumulativePoints = [];
-      for (let i = 0; i < pointsPerRace.length; i++) {
-        if (i === 0) {
-          cumulativePoints.push(pointsPerRace[i]);
-          continue;
+      for (let i = 0; i < grandsPrix.length; i++) {
+        labels.push(`${grandsPrix[i].fullName}`);
+        const result = this.overlayObject.raceResults.filter(result => result.grandPrix === grandsPrix[i].grandPrixId)[0];
+        if (result) {
+          pointsPerRace.push(this.convertResultToPoints(result));
+          cumulativePoint += pointsPerRace[i];
+          cumulativePoints.push(cumulativePoint);
+        } else {
+          pointsPerRace.push(0);
+          cumulativePoints.push(null);
         }
-        cumulativePoints.push(cumulativePoints[i - 1] + pointsPerRace[i]);
       }
-
 
       const primaryLight = getTailwindColor('--color-primary-light');
-      // const white = getTailwindColor('--color-f1-white');
       return {
         labels: labels,
         datasets: [
@@ -82,11 +80,11 @@ export default {
         scales: {
           x: {
             ticks: {
-              color: white
+              display: false,
             },
             grid: {
               color: primary
-            }
+            },
           },
           y: {
             suggestedMin: 0,
@@ -127,10 +125,19 @@ export default {
   },
   methods: {
     convertResultToPoints(result) {
-      if (result.position > 10) return 0;
+      if (result.position > 10 || result.position === 0) return 0;
       const points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1]; // Verify this
-      console.log(result, points[result.position - 1], (result.fastestLap ? 1 : 0));
       return points[result.position - 1] + (result.fastestLap ? 1 : 0);
+    },
+    getLatestSeason() {
+      let latestSeason = 0;
+      for (let i = 0; i < this.overlayObject.raceResults.length; i++) {
+        const grandPrix = getGrandPrix(this.overlayObject.raceResults[i].grandPrix);
+        if (grandPrix.season > latestSeason) {
+          latestSeason = grandPrix.season;
+        }
+      }
+      return latestSeason;
     },
     exit() {
       this.$emit('exit');
@@ -150,10 +157,11 @@ export default {
         <span class="material-icons">close</span>
       </CloseButton>
     </div>
-    <div class="tw-bg-primary-dark tw-border-t-1 tw-border-primary-light tw-p-4 tw-rounded-b-lg">
-      <div class="tw-flex tw-justify-between tw-text-sm">
-        <div>{{ getChartData.datasets[0].label }}</div>
-        <div>{{ getChartData.datasets[1].label }}</div>
+    <div class="tw-bg-primary-dark tw-border-t-1 tw-border-primary-light tw-p-4 tw-pt-2 tw-rounded-b-lg">
+      <div class="tw-flex tw-justify-between">
+        <div class="tw-text-sm tw-mt-1">{{ getChartData.datasets[0].label }}</div>
+        <div class="">{{ getLatestSeason() }} Race Results</div>
+        <div class="tw-text-sm tw-mt-1">{{ getChartData.datasets[1].label }}</div>
       </div>
       <CustomChart class="tw-h-96" type="line" :data="getChartData" :options="chartOptions"/>
     </div>

@@ -48,7 +48,7 @@ export default {
           {{ driver.fantasyPoints }}
         </div>
         <div class="tw-absolute tw-w-full tw-h-full tw-flex tw-gap-2 tw-items-center tw-justify-end">
-          <div class="hover-child tw-transition-opacity tw-cursor-pointer tw-w-5 tw-h-5" title="Show Driver Graph">
+          <div v-if="driver.raceResults" class="hover-child tw-transition-opacity tw-cursor-pointer tw-w-5 tw-h-5" title="Show Driver Graph">
             <span @click="graph()" class="material-symbols-outlined tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center">bar_chart</span>
           </div>
           <div class="hover-child tw-transition-opacity tw-cursor-pointer tw-w-5 tw-h-5" title="Edit Driver">
