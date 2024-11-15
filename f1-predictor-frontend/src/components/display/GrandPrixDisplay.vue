@@ -136,6 +136,16 @@ export default {
 
       return location;
     },
+    getImageUrl(locationName) {
+      try {
+        // Dynamically require the image if necessary (use the correct path)
+        return require(`@/assets/circuits/${locationName.split(' ').join('_')}.jpg`);
+      } catch (e) {
+        // Return a fallback image if the specific one is not found
+        console.log("Fallback image used for", locationName);
+        return require('@/assets/logo.png');
+      }
+    },
   }
 }
 
@@ -156,10 +166,10 @@ export default {
     </div>
     <div class="tw-w-full tw-h-full tw-bg-primary-dark tw-rounded-b tw-flex tw-flex-col tw-pt-1">
       <div class="tw-flex tw-flex-row tw-h-full tw-px-1 tw-gap-1">
-        <div class="tw-relative tw-h-full tw-w-full tw-bg-f1-black tw-border-primary-light tw-border-1 tw-rounded"
-             :class="[index === currentIndex ? '' : 'tw-opacity-50']">
-          <!--IMAGE-->
-          <div class="tw-absolute tw-bottom-0.5 tw-left-1 tw-text-xs">
+        <div class="tw-relative tw-h-full tw-w-full tw-bg-cover tw-bg-center tw-bg-f1-black tw-border-primary-light tw-border-1 tw-rounded"
+             :class="[index === currentIndex ? '' : 'tw-opacity-50']"
+             :style="{ backgroundImage: `url(${getImageUrl(circuit.locationName)})` }">
+          <div class="tw-absolute tw-bottom-0.5 tw-left-1 tw-text-left tw-text-xs">
             {{ getLocation() }}
           </div>
         </div>
