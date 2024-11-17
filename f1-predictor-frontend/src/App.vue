@@ -7,14 +7,29 @@
       </div>
       <div class="tw-h-64 tw-flex tw-flex-row tw-gap-2">
         <GrandPrixContainer :start-index="grandPrixStartIndex"/>
-        <TeamDisplay :team="currentTeam"/>
+        <TeamDisplay @updateComparativeTeam="updateComparativeTeam" :user-teams="userTeams"/>
       </div>
-      <RecommendedTeamsContainer @updateComparativeTeam="updateComparativeTeam" :recommended-teams="userTeams" :user-teams="userTeams" :comparative-team="currentTeam"/>
+      <RecommendedTeamsContainer :recommended-teams="recommendedTeams" :comparative-team="currentTeam"/>
     </div>
     <DriverContainer v-if="true" @showGraph="showGraph" @editObject="editObject" @editArray="editArray"/>
   </div>
   <OverlayContainer @exit="closeOverlay()" v-if="showOverlay" :overlay-object="overlayObject"
                     :overlay-array="overlayArray" :start-index="overlayIndex" :overlay-type="overlayType"/>
+  <div :style="{ height: `${appLoading ? '100' : '0'}vh` }"
+       class="tw-w-screen tw-transition-all tw-absolute tw-flex tw-items-center tw-justify-center tw-bg-f1-black tw-top-0 tw-text-f1-white">
+    <div v-if="appLoading">
+      <div class="tw-font-light tw-text-2xl tw-flex tw-flex-col tw-gap-2 tw-items-center">
+        <span v-if="loadingMessage.success" class="material-symbols-outlined tw-text-5xl">verified_user</span>
+        <span v-else class="material-symbols-outlined tw-text-red-700 tw-text-5xl">gpp_maybe</span>
+        <div class="tw-mt-0.5">{{ loadingMessage.title }}</div>
+      </div>
+      <div class="tw-font-extralight tw-text-lg tw-text-primary-light">{{ loadingMessage.message }}</div>
+    </div>
+    <div v-if="appLoading" :style="{ width: `${(loadingMessage.stage / 6) * 100}%` }"
+         class="tw-transition-all tw-absolute tw-top-0 tw-left-0 tw-h-1 tw-bg-gradient-to-l tw-from-primary-light tw-to-primary-dark tw-rounded-r-full">
+      <span></span>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -29,11 +44,20 @@ import RecommendedTeamsContainer from "@/components/container/RecommendedTeamsCo
 export default {
   name: 'App',
   async created() {
-    await this.fetchDrivers();
-    await this.fetchConstructors();
-    await this.fetchCircuits();
-    await this.fetchGrandsPrix();
-    await this.fetchUserTeams();
+    this.loadingMessage = await this.fetchDrivers();
+    if (this.allDrivers.length === 0) return;
+    this.loadingMessage = await this.fetchConstructors();
+    if (this.allConstructors.length === 0) return;
+    this.loadingMessage = await this.fetchCircuits();
+    if (this.allCircuits.length === 0) return;
+    this.loadingMessage = await this.fetchGrandsPrix();
+    if (this.allGrandsPrix.length === 0) return;
+    this.loadingMessage = await this.fetchUserTeams();
+    if (this.userTeams.length === 0) return;
+    this.loadingMessage = await this.fetchRecommendedTeams();
+    if (this.recommendedTeams.length === 0) return;
+
+    this.appLoading = false;
   },
   data() {
     return {
@@ -43,6 +67,8 @@ export default {
       overlayType: '',
       overlayObject: {},
       showOverlay: false,
+      appLoading: true,
+      loadingMessage: {title: 'Loading', message: 'Loading Data...', success: true, stage: 0},
       currentTeam: {},
     }
   },
@@ -65,7 +91,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchDrivers', 'fetchConstructors', 'fetchCircuits', 'fetchGrandsPrix', 'fetchUserTeams']),
+    ...mapActions(['fetchDrivers', 'fetchConstructors', 'fetchCircuits', 'fetchGrandsPrix', 'fetchUserTeams', 'fetchRecommendedTeams']),
     showGraph(target) {
       this.overlayObject = target;
       this.overlayType = 'ShowGraph';
@@ -103,7 +129,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['allGrandsPrix', 'userTeams']),
+    ...mapGetters(['allDrivers', 'allConstructors', 'allCircuits', 'allGrandsPrix', 'userTeams', 'recommendedTeams']),
   },
   components: {
     RecommendedTeamsContainer,

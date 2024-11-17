@@ -8,6 +8,7 @@ export default createStore({
         circuits: [],
         grandsPrix: [],
         userTeams: [],
+        recommendedTeams: [],
     },
     mutations: {
         setDrivers(state, drivers) {
@@ -24,6 +25,9 @@ export default createStore({
         },
         setUserTeams(state, userTeams) {
             state.userTeams = userTeams;
+        },
+        setRecommendedTeams(state, recommendedTeams) {
+            state.recommendedTeams = recommendedTeams;
         },
         addDriver(state, driver) {
             state.drivers.push(driver);
@@ -43,9 +47,20 @@ export default createStore({
                 drivers = drivers.sort((a, b) => b.fantasyPoints - a.fantasyPoints);
 
                 commit('setDrivers', drivers);
-                console.log('Drivers', drivers);
+                console.log("Drivers:", drivers);
+                return {
+                    title: "Drivers fetched",
+                    message: "Data fetched successfully with status: " + response.status,
+                    success: true,
+                    stage: 1,
+                };
             } catch (error) {
-                console.error(error);
+                return {
+                    title: "Error fetching drivers",
+                    message: error,
+                    success: false,
+                    stage: 0,
+                };
             }
         },
         async fetchConstructors({commit}) {
@@ -58,9 +73,20 @@ export default createStore({
                 sort(constructors, 'fantasyPoints');
 
                 commit('setConstructors', constructors);
-                console.log('Constructors', constructors);
+                console.log("Constructors:", constructors);
+                return {
+                    title: "Constructors fetched",
+                    message: "Data fetched successfully with status: " + response.status,
+                    success: true,
+                    stage: 2,
+                };
             } catch (error) {
-                console.error(error);
+                return {
+                    title: "Error fetching constructors",
+                    message: error,
+                    success: false,
+                    stage: 1,
+                };
             }
         },
         async fetchCircuits({commit}) {
@@ -70,9 +96,20 @@ export default createStore({
                 let circuits = await response.json();
 
                 commit('setCircuits', circuits);
-                console.log('Circuits', circuits);
+                console.log("Circuits:", circuits);
+                return {
+                    title: "Circuits fetched",
+                    message: "Data fetched successfully with status: " + response.status,
+                    success: true,
+                    stage: 3,
+                };
             } catch (error) {
-                console.error(error);
+                return {
+                    title: "Error fetching circuits",
+                    message: error,
+                    success: false,
+                    stage: 2,
+                };
             }
         },
         async fetchGrandsPrix({commit}) {
@@ -82,9 +119,20 @@ export default createStore({
                 let grandsPrix = await response.json();
 
                 commit('setGrandsPrix', grandsPrix);
-                console.log('Grands Prix', grandsPrix);
+                console.log("Grands Prix:", grandsPrix);
+                return {
+                    title: "Grands Prix fetched",
+                    message: "Data fetched successfully with status: " + response.status,
+                    success: true,
+                    stage: 4,
+                };
             } catch (error) {
-                console.error(error);
+                return {
+                    title: "Error fetching grands prix",
+                    message: error,
+                    success: false,
+                    stage: 3,
+                };
             }
         },
         async fetchUserTeams({commit}) {
@@ -94,9 +142,43 @@ export default createStore({
                 let userTeams = await response.json();
 
                 commit('setUserTeams', userTeams);
-                console.log('User Teams', userTeams);
+                console.log("User Teams:", userTeams);
+                return {
+                    title: "User Teams fetched",
+                    message: "Data fetched successfully with status: " + response.status,
+                    success: true,
+                    stage: 5,
+                };
             } catch (error) {
-                console.error(error);
+                return {
+                    title: "Error fetching user teams",
+                    message: error,
+                    success: false,
+                    stage: 4,
+                };
+            }
+        },
+        async fetchRecommendedTeams({commit}) {
+            try {
+                const response = await fetch(`http://localhost:8081/api/teams/recommended`);
+                if (!response.ok) throw new Error("Failed to fetch recommended teams");
+                let recommendedTeams = await response.json();
+
+                commit('setRecommendedTeams', recommendedTeams);
+                console.log("Recommended Teams:", recommendedTeams);
+                return {
+                    title: "Recommended Teams fetched",
+                    message: "Data fetched successfully with status: " + response.status,
+                    success: true,
+                    stage: 6,
+                };
+            } catch (error) {
+                return {
+                    title: "Error fetching recommended teams",
+                    message: error,
+                    success: false,
+                    stage: 5,
+                };
             }
         },
         // eslint-disable-next-line no-unused-vars
@@ -195,5 +277,8 @@ export default createStore({
         userTeams(state) {
             return state.userTeams;
         },
+        recommendedTeams(state) {
+            return state.recommendedTeams;
+        }
     },
 });
