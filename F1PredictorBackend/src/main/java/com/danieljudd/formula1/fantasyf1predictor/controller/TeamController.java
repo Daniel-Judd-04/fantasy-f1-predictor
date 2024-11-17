@@ -31,10 +31,14 @@ public class TeamController {
 
   @GetMapping("/user")
   public List<Team> getUserTeams() {
-    List<Team> teams = teamRepository.findAll();
-    teams.removeIf(team -> team.getTeamOwner().equals("Generated-by-F1-Predictor"));
-    return teams;
+    return teamRepository.findAll();
   }
+
+  @GetMapping("/recommended")
+  public List<Team> getRecommendedTeams() {
+    return teamService.getRecommendedTeams();
+  }
+
 
   @GetMapping("/teamOwner={teamOwner}&teamName={teamName}")
   public Team getTeam(@PathVariable String teamOwner, @PathVariable String teamName) {

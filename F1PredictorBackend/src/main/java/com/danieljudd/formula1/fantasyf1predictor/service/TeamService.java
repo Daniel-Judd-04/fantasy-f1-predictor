@@ -8,7 +8,9 @@ import com.danieljudd.formula1.fantasyf1predictor.repository.ConstructorReposito
 import com.danieljudd.formula1.fantasyf1predictor.repository.DriverRepository;
 import com.danieljudd.formula1.fantasyf1predictor.repository.TeamRepository;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,36 @@ public class TeamService {
 
   @Autowired
   private ConstructorRepository constructorRepository;
+
+  public List<Team> getRecommendedTeams() {
+    List<Team> teams = new ArrayList<>();
+
+    for (int i = 0; i < 55; i++) {
+      Team team = new Team();
+      team.setTeamOwner("Recommended");
+      team.setTeamName("Team " + i);
+
+      Set<Driver> drivers = new HashSet<>();
+      while (drivers.size() < 5) {
+        drivers.add(driverRepository.findByDriverId((int) (Math.random() * 20) + 1));
+      }
+      team.setDrivers(drivers);
+
+      Set<Constructor> constructors = new HashSet<>();
+      while (constructors.size() < 2) {
+        constructors.add(constructorRepository.findByConstructorId((int) (Math.random() * 10) + 1));
+      }
+      team.setConstructors(constructors);
+
+      team.setCostCap(calculateValue(team));
+      team.setFreeTransfers((byte) 0);
+      team.setActiveChip("None");
+
+      teams.add(team);
+    }
+
+    return teams;
+  }
 
   public Team addTeam(TeamDTO teamDTO) {
     if (teamRepository.findByTeamOwnerAndTeamName(teamDTO.getTeamOwner(), teamDTO.getTeamName())
@@ -60,6 +92,17 @@ public class TeamService {
           constructorRepository.findByConstructorId(constructorId).getFantasyPrice());
     }
     return costCap;
+  }
+
+  private BigDecimal calculateValue(Team team) {
+    BigDecimal value = new BigDecimal("0.0");
+    for (Driver driver : team.getDrivers()) {
+      value = value.add(driver.getFantasyPrice());
+    }
+    for (Constructor constructor : team.getConstructors()) {
+      value = value.add(constructor.getFantasyPrice());
+    }
+    return value;
   }
 
   private Team convertTeamDTOToTeam(TeamDTO teamDTO) {
