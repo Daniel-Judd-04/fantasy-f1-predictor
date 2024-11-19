@@ -1,6 +1,6 @@
 <script>
 
-import {getConstructor, getConstructorPoints, getDriver, getGrandPrix} from "@/utils/common";
+import {getConstructor, getDriver} from "@/utils/common";
 import {mapGetters} from "vuex";
 
 export default {
@@ -14,6 +14,20 @@ export default {
       } else if (type === 'constructor') {
         return this.comparativeTeam.constructors.includes(id);
       }
+    },
+    getRecommendationColor(value, limit, freedom, inverseLimit = false, inverseFreedom = false) {
+      let color = null;
+      if (inverseLimit && value < limit) {
+        color = 'red'; // : Math.abs(value - limit) < (value * freedom) ? 'amber' : 'green';
+      } else if (!inverseLimit && value > limit) {
+        color = 'red'; // : Math.abs(value - limit) > (value * freedom) ? 'amber' : 'green';
+      } else if (inverseFreedom) {
+        color = Math.abs(value - limit) < (value * freedom) ? 'amber' : 'green';
+      } else {
+        color = Math.abs(value - limit) > (value * freedom) ? 'amber' : 'green';
+      }
+
+      return 'tw-text-' + color + '-600';
     }
   },
   props: {
@@ -42,74 +56,21 @@ export default {
       }
       return transfers;
     },
-    getNumberOfRaces() {
-      const season = 2023;
-      return this.allGrandsPrix.filter(gp => gp.season === season && gp.raceResults.length !== 0).length
-    },
-    calculateAverageFantasyPoints() {
-      let totalFantasyPoints = 0;
-      for (let driverId of this.team.drivers) totalFantasyPoints += getDriver(driverId).fantasyPoints;
-      for (let constructorId of this.team.constructors) totalFantasyPoints += getConstructor(constructorId).fantasyPoints;
-      return (totalFantasyPoints / this.getNumberOfRaces).toFixed(0);
-    },
-    calculateAverageRecentPoints() {
-      const season = 2023;
-      let averageRecentPoints = 0;
-
-      function getObjectAverageRecentPoints(teamObject) {
-        if (teamObject.raceResults.length === 0) return;
-        const teamObjectRaceResults = teamObject.raceResults.filter(result => getGrandPrix(result.grandPrix).season === season).sort((a, b) => a.round - b.round);
-        if (teamObjectRaceResults.length === 0) return;
-        let teamObjectRecentPoints = 0;
-        for (let i = 0; i < teamObjectRaceResults.length; i++) teamObjectRecentPoints += teamObject.raceResults[i].position * (i + 1);
-        return teamObjectRecentPoints / teamObjectRaceResults.length;
-      }
-
-      for (let driverId of this.team.drivers) {
-        averageRecentPoints += getObjectAverageRecentPoints(getDriver(driverId));
-      }
-      for (let constructorId of this.team.constructors) {
-        averageRecentPoints += getObjectAverageRecentPoints(getConstructor(constructorId));
-      }
-      return (averageRecentPoints / this.getNumberOfRaces).toFixed(0);
-    },
-    calculateAveragePoints() {
-      let totalPoints = 0;
-      for (let driverId of this.team.drivers) totalPoints += getDriver(driverId).points;
-      for (let constructorId of this.team.constructors) totalPoints += getConstructorPoints(constructorId);
-      return (totalPoints / this.getNumberOfRaces).toFixed(0);
-    },
-    calculateConsistency() {
-      const season = 2023;
-      let totalDifference = 0;
-
-      function getObjectDifference(teamObject, averagePoints) {
-        if (teamObject.raceResults.length === 0) return;
-        const teamObjectRaceResults = teamObject.raceResults.filter(result => getGrandPrix(result.grandPrix).season === season).sort((a, b) => a.round - b.round);
-        if (teamObjectRaceResults.length === 0) return;
-        let teamObjectDifference = 0;
-        for (let i = 0; i < teamObjectRaceResults.length; i++) teamObjectDifference += Math.abs(teamObject.raceResults[i].position - averagePoints);
-        return teamObjectDifference / teamObjectRaceResults.length;
-      }
-
-      for (let driverId of this.team.drivers) {
-        totalDifference += getObjectDifference(getDriver(driverId), this.calculateAveragePoints)
-      }
-      for (let constructorId of this.team.constructors) {
-        totalDifference += getObjectDifference(getConstructor(constructorId), this.calculateAveragePoints)
-      }
-      return ((1 - (totalDifference / (this.getNumberOfRaces * ((25 + 18 + 1) * 2)))) * 1000).toFixed(0);
-    }
   }
 }
 </script>
 
 <template>
+  <div v-if="false">
+    <!--    Pre-load tailwind colours -->
+    <span class="tw-text-red-600"></span>
+    <span class="tw-text-amber-600"></span>
+    <span class="tw-text-green-600"></span>
+  </div>
   <div v-if="team" class="tw-flex tw-border-t-1 tw-border-l-1 tw-rounded-tl-lg tw-border-primary-light tw-py-1 tw-gap-2 tw-text-f1-white">
-    <div class="tw-w-1/12 tw-border-r-1 tw-border-primary-light tw-flex tw-justify-center tw-items-center tw-px-1"
-         :class="`${team.costCap - comparativeTeam.costCap > 0 ? 'tw-text-red-700' : Math.abs(team.costCap - comparativeTeam.costCap) > 1 ? 'tw-text-amber-500' : 'tw-text-green-600'}`">
-      <div class="tw-pt-0.5 tw-font-medium">
-        £{{ team.costCap }}m
+    <div class="tw-w-1/12 tw-border-r-1 tw-border-primary-light tw-flex tw-justify-center tw-items-center tw-px-1">
+      <div class="tw-pt-0.5 tw-font-medium" :class="`${getRecommendationColor(team.value, comparativeTeam.value, 0.1)}`">
+        £{{ team.value.toFixed(1) }}m
       </div>
     </div>
     <div class="tw-w-5/12 tw-flex tw-justify-between tw-font-medium">
@@ -121,17 +82,17 @@ export default {
         <span v-else-if="team.activeChip === 'No Negative'" class="material-symbols-outlined">add_box</span>
         <span v-else-if="team.activeChip === 'Extra DRS'" class="material-symbols-outlined">ifl</span>
       </div>
-      <div class="tw-mt-0.5 tw-w-1/5"> <!-- Average Fantasy Points -->
-        {{ calculateAverageFantasyPoints }}
+      <div class="tw-mt-0.5 tw-w-1/5" :class="`${getRecommendationColor(team.averageFantasyPoints, comparativeTeam.averageFantasyPoints, 0.1, true, true)}`">
+        {{ team.averageFantasyPoints.toFixed(0) }}
       </div>
-      <div class="tw-mt-0.5 tw-w-1/5"> <!-- Average Recent Points -->
-        {{ calculateAverageRecentPoints }}
+      <div class="tw-mt-0.5 tw-w-1/5" :class="`${getRecommendationColor(team.averageRecentPoints, comparativeTeam.averageRecentPoints, 0.1, true, true)}`">
+        {{ team.averageRecentPoints.toFixed(0) }}
       </div>
-      <div class="tw-mt-0.5 tw-w-1/5"> <!-- Average Points -->
-        {{ calculateAveragePoints }}
+      <div class="tw-mt-0.5 tw-w-1/5" :class="`${getRecommendationColor(team.averagePoints, comparativeTeam.averagePoints, 0.1, true, true)}`">
+        {{ team.averagePoints.toFixed(0) }}
       </div>
-      <div class="tw-mt-0.5 tw-w-1/5"> <!-- Consistency -->
-        {{ calculateConsistency }}
+      <div class="tw-mt-0.5 tw-w-1/5" :class="`${getRecommendationColor(team.consistency, comparativeTeam.consistency, 0.1, true, true)}`">
+        {{ team.consistency.toFixed(0) }}
       </div>
     </div>
     <div class="tw-w-6/12 tw-flex tw-gap-1">
@@ -150,8 +111,7 @@ export default {
           {{ getConstructor(constructorId).shortName }}
         </div>
       </div>
-      <div :class="`${calculateTransfers > 3 ? 'tw-text-red-700' : calculateTransfers > 1 ? 'tw-text-amber-500' : 'tw-text-green-600'}`"
-           class="tw-w-1/12 tw-justify-center tw-flex tw-items-center">
+      <div :class="`${getRecommendationColor(calculateTransfers, comparativeTeam.freeTransfers, 0.5, false, true)}`" class="tw-w-1/12 tw-justify-center tw-flex tw-items-center">
         <div class="tw-mt-0.5">
           {{ calculateTransfers }}
         </div>
