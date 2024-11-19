@@ -33,7 +33,8 @@ export default {
 </script>
 
 <template>
-  <div class="tw-flex tw-items-center hover-parent tw-w-56 tw-rounded tw-h-8 tw-text-white tw-bg-primary-dark tw-border-1 tw-border-primary-light">
+  <div
+      class="tw-flex tw-items-center hover-parent tw-w-56 tw-rounded tw-text-white tw-bg-primary-dark tw-outline tw-outline-1 tw-outline-primary-light -tw-outline-offset-1">
     <div :class="[`${driver.active ? '' : 'tw-text-primary-light'}`]"
          class="tw-flex tw-w-full tw-gap-2 tw-items-center tw-justify-center tw-font-medium tw-px-1 tw-text-left">
       <div v-if="showFlag" :class="[`tw-opacity-${driver.active ? '100' : '50'}`]" :title="driver.country"
@@ -47,12 +48,12 @@ export default {
         <div class="not-hover-child tw-text-right tw-absolute tw-w-full tw-h-full">
           {{ driver.fantasyPoints }}
         </div>
-        <div class="tw-absolute tw-w-full tw-h-full tw-flex tw-gap-2 tw-items-center tw-justify-end">
-          <div v-if="driver.raceResults" class="hover-child tw-transition-opacity tw-cursor-pointer tw-w-5 tw-h-5" title="Show Driver Graph">
-            <span @click="graph()" class="material-symbols-outlined tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center">bar_chart</span>
+        <div class="tw-absolute tw-w-full tw-h-full tw-flex tw-gap-1 tw-items-center tw-justify-end">
+          <div v-if="driver.raceResults" class="hover-child tw-transition-opacity tw-cursor-pointer" title="Show Driver Graph">
+            <span @click="graph()" class="material-symbols-outlined tw-flex tw-items-center tw-justify-center">bar_chart</span>
           </div>
-          <div class="hover-child tw-transition-opacity tw-cursor-pointer tw-w-5 tw-h-5" title="Edit Driver">
-            <span @click="edit()" class="material-symbols-outlined tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center">tune</span>
+          <div class="hover-child tw-transition-opacity tw-cursor-pointer" title="Edit Driver">
+            <span @click="edit()" class="material-symbols-outlined tw-flex tw-items-center tw-justify-center">tune</span>
           </div>
         </div>
       </div>
@@ -61,10 +62,5 @@ export default {
 </template>
 
 <style scoped>
-
-</style>
-
-
-<style>
 
 </style>
