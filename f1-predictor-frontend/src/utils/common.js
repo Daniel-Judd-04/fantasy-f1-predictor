@@ -83,3 +83,17 @@ export function sort(array, sortBy) {
     console.error('Invalid sorting method: ' + sortBy, 'For array: ', array);
     return null;
 }
+
+export function isDriver(abstractObject) {
+    if (!abstractObject) {
+        return false;
+    }
+    return Object.prototype.hasOwnProperty.call(abstractObject, 'driverId');
+}
+
+export function isConstructor(abstractObject) {
+    if (!abstractObject) {
+        return false;
+    }
+    return Object.prototype.hasOwnProperty.call(abstractObject, 'constructorId');
+}
