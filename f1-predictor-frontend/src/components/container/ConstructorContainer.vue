@@ -35,7 +35,7 @@ export default {
         Edit
       </ContinueButton>
     </div>
-    <div class="tw-flex tw-flex-col tw-h-full tw-justify-between" :key="allConstructors.length">
+    <div class="tw-w-56 tw-flex tw-flex-col tw-h-full tw-justify-between" :key="allConstructors.length">
       <ConstructorDisplay @edit="edit" @graph="graph" v-for="constructor in allConstructors" :key="constructor.code"
                           :constructor="constructor" :flagURL="getFlagURL(constructor.country)"/>
     </div>

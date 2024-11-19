@@ -54,7 +54,7 @@ export default {
 
 <template>
   <div v-if="allGrandsPrix"
-       class="tw-relative tw-w-2/3 tw-h-64 tw-border-2 tw-border-primary-light tw-bg-f1-black tw-rounded-lg tw-overflow-hidden">
+       class="tw-relative tw-w-2/3 tw-h-64 tw-border-1 tw-border-primary-light tw-bg-f1-black tw-rounded-lg tw-overflow-hidden">
     <div class="tw-w-full tw-h-full tw-py-2 tw-overflow-hidden tw-relative">
       <div
           class="tw-w-fit tw-px-full tw-h-full tw-flex tw-flex-row tw-gap-2 tw-overflow-hidden tw-scroll-smooth">

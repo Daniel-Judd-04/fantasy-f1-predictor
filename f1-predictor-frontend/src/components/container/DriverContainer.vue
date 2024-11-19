@@ -35,7 +35,7 @@ export default {
         Edit
       </ContinueButton>
     </div>
-    <div class="tw-flex tw-flex-col tw-h-full tw-justify-between">
+    <div class="tw-w-56 tw-flex tw-flex-col tw-h-full tw-justify-between">
       <DriverDisplay @graph="graph" @edit="edit" v-for="driver in allDrivers" :key="driver.code" :driver="driver"
                      :flagURL="getFlagURL(driver.country)"/>
     </div>
