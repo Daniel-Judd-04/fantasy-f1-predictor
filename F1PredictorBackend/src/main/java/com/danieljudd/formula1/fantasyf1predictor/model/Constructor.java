@@ -49,6 +49,10 @@ public class Constructor {
   @OneToMany(mappedBy = "constructor", orphanRemoval = true)
   private List<Driver> drivers = new ArrayList<>();
 
+  @OneToMany(mappedBy = "constructor", orphanRemoval = true)
+  @JsonIdentityReference(alwaysAsId = true)
+  private List<RaceResult> raceResults = new ArrayList<>();
+
   private int fantasyPoints = 0;
   private BigDecimal fantasyPrice = new BigDecimal("0.0");
 

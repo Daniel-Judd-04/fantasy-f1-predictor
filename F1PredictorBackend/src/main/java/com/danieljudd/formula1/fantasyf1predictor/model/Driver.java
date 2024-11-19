@@ -10,9 +10,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -50,6 +53,10 @@ public class Driver {
   @JoinColumn(name = "constructor_id", nullable = false)
   @JsonIdentityReference(alwaysAsId = true)
   private Constructor constructor;
+
+  @OneToMany(mappedBy = "driver", orphanRemoval = true)
+  @JsonIdentityReference(alwaysAsId = true)
+  private List<RaceResult> raceResults = new ArrayList<>();
 
   private BigDecimal points = new BigDecimal("0.0");
   private int fantasyPoints = 0;
