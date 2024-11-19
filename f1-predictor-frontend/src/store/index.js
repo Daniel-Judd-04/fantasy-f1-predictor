@@ -1,6 +1,9 @@
 import {createStore} from 'vuex';
 import {sort} from "@/utils/common";
 
+const maxStage = 6;
+const baseUrl = 'http://localhost:8081/api/';
+
 export default createStore({
     state: {
         drivers: [],
@@ -39,7 +42,7 @@ export default createStore({
     actions: {
         async fetchDrivers({commit}) {
             try {
-                const response = await fetch(`http://localhost:8081/api/drivers`);
+                const response = await fetch(`${baseUrl}drivers`);
                 if (!response.ok) throw new Error("Failed to fetch drivers");
                 let drivers = await response.json();
 
@@ -53,19 +56,21 @@ export default createStore({
                     message: "Data fetched successfully with status: " + response.status,
                     success: true,
                     stage: 1,
+                    maxStage: maxStage,
                 };
             } catch (error) {
                 return {
                     title: "Error fetching drivers",
                     message: error,
                     success: false,
-                    stage: 0,
+                    stage: 1,
+                    maxStage: maxStage,
                 };
             }
         },
         async fetchConstructors({commit}) {
             try {
-                const response = await fetch(`http://localhost:8081/api/constructors`);
+                const response = await fetch(`${baseUrl}constructors`);
                 if (!response.ok) throw new Error("Failed to fetch constructors");
                 let constructors = await response.json();
 
@@ -79,19 +84,21 @@ export default createStore({
                     message: "Data fetched successfully with status: " + response.status,
                     success: true,
                     stage: 2,
+                    maxStage: maxStage,
                 };
             } catch (error) {
                 return {
                     title: "Error fetching constructors",
                     message: error,
                     success: false,
-                    stage: 1,
+                    stage: 2,
+                    maxStage: maxStage,
                 };
             }
         },
         async fetchCircuits({commit}) {
             try {
-                const response = await fetch(`http://localhost:8081/api/circuits`);
+                const response = await fetch(`${baseUrl}circuits`);
                 if (!response.ok) throw new Error("Failed to fetch circuits");
                 let circuits = await response.json();
 
@@ -102,19 +109,21 @@ export default createStore({
                     message: "Data fetched successfully with status: " + response.status,
                     success: true,
                     stage: 3,
+                    maxStage: maxStage,
                 };
             } catch (error) {
                 return {
                     title: "Error fetching circuits",
                     message: error,
                     success: false,
-                    stage: 2,
+                    stage: 3,
+                    maxStage: maxStage,
                 };
             }
         },
         async fetchGrandsPrix({commit}) {
             try {
-                const response = await fetch(`http://localhost:8081/api/grands-prix`);
+                const response = await fetch(`${baseUrl}grands-prix`);
                 if (!response.ok) throw new Error("Failed to fetch grands prix");
                 let grandsPrix = await response.json();
 
@@ -125,19 +134,21 @@ export default createStore({
                     message: "Data fetched successfully with status: " + response.status,
                     success: true,
                     stage: 4,
+                    maxStage: maxStage,
                 };
             } catch (error) {
                 return {
                     title: "Error fetching grands prix",
                     message: error,
                     success: false,
-                    stage: 3,
+                    stage: 4,
+                    maxStage: maxStage,
                 };
             }
         },
         async fetchUserTeams({commit}) {
             try {
-                const response = await fetch(`http://localhost:8081/api/teams/user`);
+                const response = await fetch(`${baseUrl}teams/user`);
                 if (!response.ok) throw new Error("Failed to fetch user teams");
                 let userTeams = await response.json();
 
@@ -148,19 +159,21 @@ export default createStore({
                     message: "Data fetched successfully with status: " + response.status,
                     success: true,
                     stage: 5,
+                    maxStage: maxStage,
                 };
             } catch (error) {
                 return {
                     title: "Error fetching user teams",
                     message: error,
                     success: false,
-                    stage: 4,
+                    stage: 5,
+                    maxStage: maxStage,
                 };
             }
         },
         async fetchRecommendedTeams({commit}) {
             try {
-                const response = await fetch(`http://localhost:8081/api/teams/recommended`);
+                const response = await fetch(`${baseUrl}teams/recommended/limit=500`);
                 if (!response.ok) throw new Error("Failed to fetch recommended teams");
                 let recommendedTeams = await response.json();
 
@@ -171,13 +184,15 @@ export default createStore({
                     message: "Data fetched successfully with status: " + response.status,
                     success: true,
                     stage: 6,
+                    maxStage: maxStage,
                 };
             } catch (error) {
                 return {
                     title: "Error fetching recommended teams",
                     message: error,
                     success: false,
-                    stage: 5,
+                    stage: 6,
+                    maxStage: maxStage,
                 };
             }
         },
@@ -206,7 +221,7 @@ export default createStore({
                 } else if (objectType === 'constructor') {
                     body.constructorId = object.constructorId;
                 }
-                const response = await fetch(`http://localhost:8081/api/${objectType}s`, {
+                const response = await fetch(`${baseUrl}${objectType}s`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -238,7 +253,7 @@ export default createStore({
                     body.constructorId = object.constructorId;
                     body.carNumber = object.carNumber;
                 }
-                const response = await fetch(`http://localhost:8081/api/${objectType}s`, {
+                const response = await fetch(`${baseUrl}${objectType}s`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

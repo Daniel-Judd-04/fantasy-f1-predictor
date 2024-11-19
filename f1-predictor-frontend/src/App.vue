@@ -1,5 +1,6 @@
 <template>
-  <div id="app" class="tw-h-screen tw-w-screen tw-bg-f1-black tw-flex tw-flex-row tw-justify-between tw-gap-2 tw-p-1 tw-select-none">
+  <div id="app"
+       class="tw-h-screen tw-w-screen tw-bg-f1-black tw-flex tw-flex-row tw-justify-between tw-gap-2 tw-p-1 tw-select-none tw-text-f1-white tw-border-primary-light tw-outline-primary-light">
     <ConstructorContainer v-if="true" @showGraph="showGraph" @editObject="editObject" @editArray="editArray"/>
     <div class="tw-w-full tw-h-full tw-flex tw-flex-col tw-gap-2 tw-overflow-hidden">
       <div class="tw-h-8 tw-text-xl tw-font-extrabold tw-text-f1-white">
@@ -16,8 +17,8 @@
   <OverlayContainer @exit="closeOverlay()" v-if="showOverlay" :overlay-object="overlayObject"
                     :overlay-array="overlayArray" :start-index="overlayIndex" :overlay-type="overlayType"/>
   <div :style="{ height: `${appLoading ? '100' : '0'}vh` }"
-       class="tw-w-screen tw-transition-all tw-absolute tw-flex tw-items-center tw-justify-center tw-bg-f1-black tw-top-0 tw-text-f1-white">
-    <div v-if="appLoading">
+       class="tw-w-screen tw-overflow-hidden tw-transition-all tw-absolute tw-flex tw-items-center tw-justify-center tw-bg-f1-black tw-top-0 tw-text-f1-white">
+    <div>
       <div class="tw-font-light tw-text-2xl tw-flex tw-flex-col tw-gap-2 tw-items-center">
         <span v-if="loadingMessage.success" class="material-symbols-outlined tw-text-5xl">verified_user</span>
         <span v-else class="material-symbols-outlined tw-text-red-700 tw-text-5xl">gpp_maybe</span>
@@ -25,11 +26,14 @@
       </div>
       <div class="tw-font-extralight tw-text-lg tw-text-primary-light">{{ loadingMessage.message }}</div>
     </div>
-    <div v-if="appLoading" :style="{ width: `${(loadingMessage.stage / 6) * 100}%` }"
-         class="tw-transition-all tw-absolute tw-top-0 tw-left-0 tw-h-1 tw-bg-gradient-to-l tw-from-primary-light tw-to-primary-dark tw-rounded-r-full">
+    <div :style="{ width: `${(loadingMessage.stage / loadingMessage.maxStage) * 90}%` }"
+         :class="`${loadingMessage.success ? 'tw-from-primary-light' : 'tw-from-red-600'}`"
+         class="tw-transition-all tw-top-0 tw-left-0 tw-absolute tw-z-0 tw-h-1 tw-bg-gradient-to-l tw-to-primary-dark tw-rounded-r-full">
       <span></span>
     </div>
   </div>
+
+
 </template>
 
 <script>
