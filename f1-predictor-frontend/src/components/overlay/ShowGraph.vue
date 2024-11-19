@@ -1,7 +1,7 @@
 <script>
 import {mapGetters} from "vuex";
 import CloseButton from "@/components/common/CloseButton.vue";
-import {getConstructor, getGrandPrix} from "@/utils/common";
+import {getConstructor, getGrandPrix, isDriver} from "@/utils/common";
 
 function getTailwindColor(varName) {
   return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
@@ -29,9 +29,13 @@ export default {
       let cumulativePoints = [];
       for (let i = 0; i < grandsPrix.length; i++) {
         labels.push(`${grandsPrix[i].fullName}`);
-        const result = this.overlayObject.raceResults.filter(result => result.grandPrix === grandsPrix[i].grandPrixId)[0];
-        if (result) {
-          pointsPerRace.push(this.convertResultToPoints(result));
+        const results = this.overlayObject.raceResults.filter(result => result.grandPrix === grandsPrix[i].grandPrixId);
+        if (results.length > 0) {
+          let totalPoints = 0;
+          for (let result of results) {
+            totalPoints += this.convertResultToPoints(result);
+          }
+          pointsPerRace.push(totalPoints);
           cumulativePoint += pointsPerRace[i];
           cumulativePoints.push(cumulativePoint);
         } else {
@@ -88,7 +92,7 @@ export default {
           },
           y: {
             suggestedMin: 0,
-            suggestedMax: 30,
+            suggestedMax: isDriver(this.overlayObject) ? 30 : 50,
             type: 'linear',
             display: true,
             position: 'left',
@@ -148,7 +152,7 @@ export default {
 
 <template>
   <div :class="[`tw-to-${getGradientColour}`]"
-       class="tw-bg-primary-dark tw-w-1/2 tw-bg-gradient-to-bl tw-to-200% tw-from-primary-dark tw-drop-shadow-2xl tw-rounded-lg tw-flex tw-flex-col tw-text-f1-white">
+       class="tw-bg-primary-dark tw-w-1/2 tw-bg-gradient-to-bl tw-to-200% tw-from-primary-dark tw-drop-shadow-2xl tw-outline tw-outline-1 -tw-outline-offset-1 tw-outline-primary-light tw-rounded-lg tw-flex tw-flex-col tw-text-f1-white">
     <div class="hover-parent tw-p-2 tw-flex tw-justify-center tw-items-center tw-gap-2">
       <div class="tw-text-2xl tw-font-bold tw-pl-2 tw-pt-0.5 tw-mr-auto">
         {{ overlayObject.fullName }}

@@ -146,7 +146,7 @@ export default {
 
 <template>
   <div
-      class="tw-w-96 tw-bg-gradient-to-bl tw-to-100% tw-from-primary-dark tw-to-f1-red tw-drop-shadow-2xl tw-rounded-lg tw-flex tw-flex-col tw-text-f1-white">
+      class="tw-w-96 tw-bg-gradient-to-bl tw-to-100% tw-from-primary-dark tw-to-f1-red tw-outline tw-outline-1 -tw-outline-offset-1 tw-outline-primary-light tw-drop-shadow-2xl tw-rounded-lg tw-flex tw-flex-col tw-text-f1-white">
     <div class="hover-parent tw-p-2 tw-flex tw-justify-center tw-items-center tw-gap-2">
       <div class="tw-text-2xl tw-font-bold tw-pl-2 tw-pt-0.5 tw-mr-auto">
         {{ getTitle() }}

@@ -142,7 +142,7 @@ export default {
 
 <template>
   <div :class="[`tw-to-${getGradientColour}`]"
-       class="tw-w-96 tw-bg-gradient-to-bl tw-to-100% tw-from-primary-dark tw-drop-shadow-2xl tw-rounded-lg tw-flex tw-flex-col tw-text-f1-white">
+       class="tw-w-96 tw-bg-gradient-to-bl tw-to-100% tw-from-primary-dark tw-drop-shadow-2xl tw-outline tw-outline-1 -tw-outline-offset-1 tw-outline-primary-light tw-rounded-lg tw-flex tw-flex-col tw-text-f1-white">
     <div class="tw-p-2 tw-flex tw-justify-center tw-items-center tw-gap-2 hover-parent">
       <div class="flag-frame tw-border-1 tw-border-f1-white tw-overflow-hidden tw-h-10 tw-align-middle tw-rounded">
         <img :src="getFlagURL(getProperty.country)" alt="Flag" class="flag-image"/>
@@ -170,11 +170,11 @@ export default {
     </div>
     <div class="tw-flex tw-justify-between tw-h-14 tw-gap-2 tw-border-primary-light tw-none tw-bg-primary-dark tw-p-2 tw-rounded-b-lg">
       <ContinueButton @continue="previous" :class="[`${currentIndex > 0 ? '' : 'tw-invisible'}`]">
-        <span class="material-icons">arrow_back</span>
+        <span class="material-symbols-outlined">arrow_back</span>
       </ContinueButton>
       <ContinueButton @continue="close">Save & Close</ContinueButton>
       <ContinueButton @continue="next" :class="`${currentIndex < overlayArray.length-1 ? '' : 'tw-invisible'}`">
-        <span class="material-icons">arrow_forward</span>
+        <span class="material-symbols-outlined">arrow_forward</span>
       </ContinueButton>
     </div>
   </div>
