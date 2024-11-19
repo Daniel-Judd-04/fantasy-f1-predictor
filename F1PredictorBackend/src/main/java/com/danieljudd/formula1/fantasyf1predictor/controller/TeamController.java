@@ -1,6 +1,7 @@
 package com.danieljudd.formula1.fantasyf1predictor.controller;
 
-import com.danieljudd.formula1.fantasyf1predictor.DTO.TeamDTO;
+import com.danieljudd.formula1.fantasyf1predictor.DTO.TeamInputDTO;
+import com.danieljudd.formula1.fantasyf1predictor.DTO.TeamOutputDTO;
 import com.danieljudd.formula1.fantasyf1predictor.model.Team;
 import com.danieljudd.formula1.fantasyf1predictor.repository.TeamRepository;
 import com.danieljudd.formula1.fantasyf1predictor.service.TeamService;
@@ -24,35 +25,29 @@ public class TeamController {
   @Autowired
   private TeamService teamService;
 
-  @GetMapping
-  public List<Team> getAllTeams() {
-    return teamRepository.findAll();
-  }
-
   @GetMapping("/user")
-  public List<Team> getUserTeams() {
-    return teamRepository.findAll();
+  public List<TeamOutputDTO> getUserTeams() {
+    return teamService.convertTeamsToDTOs(teamRepository.findAll());
   }
 
-  @GetMapping("/recommended")
-  public List<Team> getRecommendedTeams() {
-    return teamService.getRecommendedTeams();
+  @GetMapping("/recommended/limit={limit}")
+  public List<TeamOutputDTO> getRecommendedTeams(@PathVariable int limit) {
+    return teamService.convertTeamsToDTOs(teamService.getRecommendedTeams(limit));
   }
-
 
   @GetMapping("/teamOwner={teamOwner}&teamName={teamName}")
-  public Team getTeam(@PathVariable String teamOwner, @PathVariable String teamName) {
+  public TeamOutputDTO getTeam(@PathVariable String teamOwner, @PathVariable String teamName) {
     Team team = teamRepository.findByTeamOwnerAndTeamName(teamOwner, teamName);
     if (team == null) {
       throw new IllegalArgumentException(
           "Team not found for owner: " + teamOwner + " and name: " + teamName);
     }
-    return team;
+    return teamService.convertTeamToDTO(team);
   }
 
   @PutMapping
-  public ResponseEntity<?> updateTeam(@RequestBody TeamDTO teamDTO) {
-    Team updatedTeam = teamService.updateTeam(teamDTO);
+  public ResponseEntity<?> updateTeam(@RequestBody TeamInputDTO teamInputDTO) {
+    Team updatedTeam = teamService.updateTeam(teamInputDTO);
     if (updatedTeam != null) {
       return ResponseEntity.ok(updatedTeam);
     }

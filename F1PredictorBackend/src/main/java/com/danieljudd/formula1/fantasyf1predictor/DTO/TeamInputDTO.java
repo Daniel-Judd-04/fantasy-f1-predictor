@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Getter;
 
 @Getter
-public class TeamDTO {
+public class TeamInputDTO {
 
   private String teamOwner;
   private String teamName;
