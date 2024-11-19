@@ -18,7 +18,8 @@ export default {
   data() {
     return {
       startIndex: 0,
-      endIndex: 10,
+      range: 10, // Keep same
+      endIndex: 10, // Keep same
       visibleTeams: [],
       sortOptions: ['Value', 'Average Fantasy Points', 'Average Recent Points', 'Average Points', 'Consistency', 'Transfers'],
       sortDesc: true
@@ -26,34 +27,56 @@ export default {
   },
   watch: {
     recommendedTeams() {
-      this.updateVisibleTeams();
+      this.resetVisibleTeams();
+    },
+    comparativeTeam() {
+      this.resetVisibleTeams();
     }
   },
   methods: {
     changeSortOrder() {
       this.sortDesc = !this.sortDesc;
-      this.updateVisibleTeams();
+      this.resetVisibleTeams();
     },
     previousPage() {
       if (this.startIndex > 1) {
-        this.startIndex -= 10;
-        this.endIndex -= 10;
+        this.startIndex -= this.range;
+        this.endIndex -= this.range;
         this.updateVisibleTeams();
       }
     },
     nextPage() {
       if (this.endIndex < this.recommendedTeams.length) {
-        this.startIndex += 10;
-        this.endIndex += 10;
+        this.startIndex += this.range;
+        this.endIndex += this.range;
         this.updateVisibleTeams();
       }
+    },
+    calculateTransfers(team) {
+      let transfers = 0;
+      for (let driverId of team.drivers) {
+        if (!this.comparativeTeam.drivers.includes(driverId)) {
+          transfers++;
+        }
+      }
+      for (let constructorId of team.constructors) {
+        if (!this.comparativeTeam.constructors.includes(constructorId)) {
+          transfers++;
+        }
+      }
+      return transfers;
+    },
+    resetVisibleTeams() {
+      this.startIndex = 0;
+      this.endIndex = this.range;
+      this.updateVisibleTeams();
     },
     updateVisibleTeams() {
       const sortOption = document.getElementById('sortOption').value;
       let newVisibleTeams = [];
       switch (sortOption) {
         case 'Value':
-          newVisibleTeams = Array.from(this.recommendedTeams).sort((a, b) => b.costCap - a.costCap);
+          newVisibleTeams = Array.from(this.recommendedTeams).sort((a, b) => b.value - a.value);
           break;
         case 'Average Fantasy Points':
           newVisibleTeams = Array.from(this.recommendedTeams).sort((a, b) => b.averageFantasyPoints - a.averageFantasyPoints);
@@ -68,9 +91,10 @@ export default {
           newVisibleTeams = Array.from(this.recommendedTeams).sort((a, b) => b.consistency - a.consistency);
           break;
         case 'Transfers':
-          newVisibleTeams = Array.from(this.recommendedTeams).sort((a, b) => a.transfers - b.transfers);
+          newVisibleTeams = Array.from(this.recommendedTeams).sort((a, b) => this.calculateTransfers(b) - this.calculateTransfers(a));
           break;
         default:
+          console.warn('Invalid sort option: ', sortOption);
           newVisibleTeams = Array.from(this.recommendedTeams);
           break;
       }
@@ -90,7 +114,7 @@ export default {
       </div>
       <div class="tw-flex tw-items-center tw-gap-2">
         Sort by
-        <select id="sortOption" @change="updateVisibleTeams"
+        <select id="sortOption" @change="resetVisibleTeams"
                 class="tw-px-2 tw-appearance-none tw-border-1 tw-border-primary-light tw-bg-primary-light tw-bg-opacity-5 tw-text-f1-white tw-text-center">
           <option :value="sortOption" v-for="sortOption in sortOptions" :key="sortOption.code">
             {{ sortOption }}
