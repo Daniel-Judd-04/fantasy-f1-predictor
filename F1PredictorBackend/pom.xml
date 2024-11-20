@@ -35,13 +35,6 @@
       <version>4.29.2</version> <!-- Use the latest stable version -->
     </dependency>
 
-    <!-- Add to your pom.xml -->
-    <dependency>
-      <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-ui</artifactId>
-      <version>1.6.14</version>
-    </dependency>
-
     <!-- Spring Boot Starter Validation -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -73,14 +66,6 @@
       <version>8.0.33</version>
     </dependency>
 
-
-    <!-- JUnit 5 for Testing -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-
     <!-- Jep: Java Embedded Python for Python Integration -->
     <dependency>
       <groupId>black.ninia</groupId>
@@ -94,6 +79,12 @@
       <artifactId>lombok</artifactId>
       <version>1.18.28</version>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>2.2.0</version>
     </dependency>
   </dependencies>
 
