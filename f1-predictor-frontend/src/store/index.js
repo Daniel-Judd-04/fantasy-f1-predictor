@@ -1,7 +1,7 @@
 import {createStore} from 'vuex';
 import {sort} from "@/utils/common";
 
-const maxStage = 6;
+const maxStage = 5;
 const baseUrl = 'http://localhost:8081/api/';
 
 export default createStore({
@@ -171,30 +171,8 @@ export default createStore({
                 };
             }
         },
-        async fetchRecommendedTeams({commit}) {
-            try {
-                const response = await fetch(`${baseUrl}teams/recommended/limit=500`);
-                if (!response.ok) throw new Error("Failed to fetch recommended teams");
-                let recommendedTeams = await response.json();
-
-                commit('setRecommendedTeams', recommendedTeams);
-                console.log("Recommended Teams:", recommendedTeams);
-                return {
-                    title: "Recommended Teams fetched",
-                    message: "Data fetched successfully with status: " + response.status,
-                    success: true,
-                    stage: 6,
-                    maxStage: maxStage,
-                };
-            } catch (error) {
-                return {
-                    title: "Error fetching recommended teams",
-                    message: error,
-                    success: false,
-                    stage: 6,
-                    maxStage: maxStage,
-                };
-            }
+        async setRecommendedTeams({commit}, teams) {
+            commit('setRecommendedTeams', teams);
         },
         // eslint-disable-next-line no-unused-vars
         async update({commit}, object) {

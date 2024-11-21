@@ -8,9 +8,9 @@
       </div>
       <div class="tw-h-64 tw-flex tw-flex-row tw-gap-2">
         <GrandPrixContainer :start-index="grandPrixStartIndex"/>
-        <TeamDisplay @updateComparativeTeam="updateComparativeTeam" :user-teams="userTeams"/>
+        <TeamDisplay @editArray="editArray" @updateComparativeTeam="updateComparativeTeam" :user-teams="userTeams"/>
       </div>
-      <RecommendedTeamsContainer :recommended-teams="recommendedTeams" :comparative-team="currentTeam"/>
+      <RecommendedTeamsContainer :comparative-team="currentTeam"/>
     </div>
     <DriverContainer v-if="true" @showGraph="showGraph" @editObject="editObject" @editArray="editArray"/>
   </div>
@@ -26,11 +26,7 @@
       </div>
       <div class="tw-font-extralight tw-text-lg tw-text-primary-light">{{ loadingMessage.message }}</div>
     </div>
-    <div :style="{ width: `${(loadingMessage.stage / loadingMessage.maxStage) * 90}%` }"
-         :class="`${loadingMessage.success ? 'tw-from-primary-light' : 'tw-from-red-600'}`"
-         class="tw-transition-all tw-top-0 tw-left-0 tw-absolute tw-z-0 tw-h-1 tw-bg-gradient-to-l tw-to-primary-dark tw-rounded-r-full">
-      <span></span>
-    </div>
+    <LoadingBar :success="loadingMessage.success" :max-stage="loadingMessage.maxStage" :stage="loadingMessage.stage"/>
   </div>
 
 
@@ -44,6 +40,7 @@ import GrandPrixContainer from "@/components/container/GrandPrixContainer.vue";
 import OverlayContainer from "@/components/overlay/OverlayContainer.vue";
 import TeamDisplay from "@/components/display/TeamDisplay.vue";
 import RecommendedTeamsContainer from "@/components/container/RecommendedTeamsContainer.vue";
+import LoadingBar from "@/components/common/LoadingBar.vue";
 
 export default {
   name: 'App',
@@ -58,8 +55,6 @@ export default {
     if (this.allGrandsPrix.length === 0) return;
     this.loadingMessage = await this.fetchUserTeams();
     if (this.userTeams.length === 0) return;
-    this.loadingMessage = await this.fetchRecommendedTeams();
-    if (this.recommendedTeams.length === 0) return;
 
     this.appLoading = false;
   },
@@ -72,7 +67,7 @@ export default {
       overlayObject: {},
       showOverlay: false,
       appLoading: true,
-      loadingMessage: {title: 'Loading', message: 'Loading Data...', success: true, stage: 0},
+      loadingMessage: {title: 'Loading', message: 'Loading Data...', success: true, stage: 0.5, maxStage: 5},
       currentTeam: {},
     }
   },
@@ -95,7 +90,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchDrivers', 'fetchConstructors', 'fetchCircuits', 'fetchGrandsPrix', 'fetchUserTeams', 'fetchRecommendedTeams']),
+    ...mapActions(['fetchDrivers', 'fetchConstructors', 'fetchCircuits', 'fetchGrandsPrix', 'fetchUserTeams']),
     showGraph(target) {
       this.overlayObject = target;
       this.overlayType = 'ShowGraph';
@@ -133,9 +128,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['allDrivers', 'allConstructors', 'allCircuits', 'allGrandsPrix', 'userTeams', 'recommendedTeams']),
+    ...mapGetters(['allDrivers', 'allConstructors', 'allCircuits', 'allGrandsPrix', 'userTeams']),
   },
   components: {
+    LoadingBar,
     RecommendedTeamsContainer,
     TeamDisplay,
     OverlayContainer,

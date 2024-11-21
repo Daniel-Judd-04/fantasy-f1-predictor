@@ -1,15 +1,13 @@
 <script>
 import CompactTeamDisplay from "@/components/display/CompactTeamDisplay.vue";
 import ContinueButton from "@/components/common/ContinueButton.vue";
+import LoadingBar from "@/components/common/LoadingBar.vue";
+import {mapActions, mapGetters} from "vuex";
 
 export default {
   name: 'RecommendedTeamsContainer',
-  components: {ContinueButton, CompactTeamDisplay},
+  components: {ContinueButton, CompactTeamDisplay, LoadingBar},
   props: {
-    recommendedTeams: {
-      type: Array,
-      required: true
-    },
     comparativeTeam: {
       type: Object,
       required: true
@@ -17,6 +15,7 @@ export default {
   },
   data() {
     return {
+      loadingMessage: {success: false, stage: 0, maxStage: 1},
       startIndex: 0,
       range: 10, // Keep same
       endIndex: 10, // Keep same
@@ -33,7 +32,54 @@ export default {
       this.resetVisibleTeams();
     }
   },
+  computed: {
+    ...mapGetters(['recommendedTeams']),
+  },
   methods: {
+    ...mapActions(['setRecommendedTeams']),
+    async loadRecommendedTeams() {
+      this.$store.dispatch('setRecommendedTeams', []);
+      this.loadingMessage = {
+        stage: 0
+      }
+
+      const eventSource = new EventSource(`http://localhost:8081/api/teams/recommended/limit=${50}`);
+
+      eventSource.onmessage = (event) => {
+        const response = JSON.parse(event.data).body;
+        this.loadingMessage = {
+          title: "New Message",
+          message: response.message,
+          success: true,
+          stage: response.stage,
+          maxStage: response.maxStage,
+        };
+        console.log(response);
+        if (response.stage === response.maxStage && response.message === "RESULT") {
+          console.log('Received result: ', response.teams);
+          this.$store.dispatch('setRecommendedTeams', response.teams);
+          eventSource.close();
+        } else {
+          console.log('Received message: ', response.message);
+        }
+      };
+
+      eventSource.onerror = () => {
+        console.error('Error receiving updates');
+        this.loadingMessage = {
+          title: "Error",
+          message: "Error!",
+          success: false,
+          stage: 1,
+          maxStage: 1,
+        };
+        eventSource.close();
+      };
+
+      // if (this.recommendedTeams.length === 0) {
+      //   console.warn('Failed to load recommended teams: ', this.loadingMessage);
+      // }
+    },
     changeSortOrder() {
       this.sortDesc = !this.sortDesc;
       this.resetVisibleTeams();
@@ -121,15 +167,20 @@ export default {
           </option>
         </select>
         <div
-            class="tw-flex tw-items-center tw-px-1 tw-border-1 tw-border-primary-light tw-rounded tw-bg-primary-light tw-bg-opacity-5 tw-text-f1-white tw-text-center tw-cursor-pointer"
+            class="tw-flex tw-items-center tw-px-1 tw-border-1 tw-border-primary-light tw-rounded tw-bg-primary-light tw-bg-opacity-5 tw-text-f1-white tw-cursor-pointer"
             @click="changeSortOrder()" id="sortOrder" :title="`Sorted in ${sortDesc ? 'descending' : 'ascending'} order`">
           <span class="material-symbols-outlined tw-text-base">{{ sortDesc ? 'south_east' : 'north_east' }}</span>
         </div>
+        <ContinueButton @continue="loadRecommendedTeams"
+                        class="tw-ml-2">
+          <span class="material-symbols-outlined tw-mx-1 tw-text-base">refresh</span>
+        </ContinueButton>
       </div>
     </div>
     <div class="tw-overflow-hidden tw-h-full tw-bg-primary-dark tw-rounded-b-lg tw-text-f1-white">
-      <div v-if="recommendedTeams.length === 0" class="tw-flex tw-items-center tw-justify-center tw-h-full">
-        <div>Loading...</div>
+      <LoadingBar v-if="recommendedTeams.length === 0" :success="loadingMessage.success" :max-stage="loadingMessage.maxStage" :stage="loadingMessage.stage"/>
+      <div v-if="recommendedTeams.length === 0 && loadingMessage.stage > 0" class="tw-text-xl tw-mt-12">
+        Loading... {{ loadingMessage.message }}
       </div>
       <div class="tw-h-full tw-flex tw-flex-col tw-px-1" v-if="recommendedTeams.length > 0 && comparativeTeam">
         <div class="tw-flex tw-gap-2 tw-border-l-1 tw-border-l-primary-dark tw-py-1 tw-font-bold">
@@ -153,15 +204,15 @@ export default {
         <div class="tw-h-full tw-flex tw-flex-col tw-gap-2">
           <CompactTeamDisplay v-for="team in visibleTeams" :key="team.code" :team="team" :comparative-team="comparativeTeam"/>
         </div>
-        <div class="tw-flex tw-justify-between tw-items-center tw-py-1 tw-text-f1-white">
+        <div class="tw-flex tw-justify-between tw-items-center tw-py-1 tw-px-1 tw-text-f1-white">
           <ContinueButton :class="`${startIndex > 1 ? '' : 'tw-invisible'}`" @continue="previousPage">
-            <span class="material-symbols-outlined">arrow_back</span>
+            <span class="material-symbols-outlined tw-text-base tw-mx-1">arrow_back</span>
           </ContinueButton>
           <div class="tw-mt-0.5 tw-text-sm">
             Showing {{ startIndex + 1 }} - {{ Math.min(endIndex, recommendedTeams.length) }} of {{ recommendedTeams.length }} Recommended Teams
           </div>
           <ContinueButton :class="`${endIndex < recommendedTeams.length ? '' : 'tw-invisible'}`" @continue="nextPage">
-            <span class="material-symbols-outlined">arrow_forward</span>
+            <span class="material-symbols-outlined tw-text-base tw-mx-1">arrow_forward</span>
           </ContinueButton>
         </div>
       </div>
