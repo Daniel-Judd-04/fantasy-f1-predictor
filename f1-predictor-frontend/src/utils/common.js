@@ -37,12 +37,9 @@ export function getConstructor(constructorID) {
 }
 
 export function getConstructorPoints(constructorId) {
-    const drivers = store.getters.allDrivers;
     let points = 0;
-    for (const driver of drivers) {
-        if (driver.constructor === constructorId) {
-            points += driver.points;
-        }
+    for (const driverId of getConstructor(constructorId).drivers) {
+        points += getDriver(driverId).points;
     }
     return points;
 }

@@ -1,11 +1,8 @@
 <template>
   <div id="app"
-       class="tw-h-screen tw-w-screen tw-bg-f1-black tw-flex tw-flex-row tw-justify-between tw-gap-2 tw-p-1 tw-select-none tw-text-f1-white tw-border-primary-light tw-outline-primary-light">
+       class="tw-h-screen tw-w-screen tw-bg-f1-black tw-flex tw-flex-row tw-justify-between tw-gap-2 tw-p-1 tw-pt-2 tw-select-none tw-text-f1-white tw-border-primary-light tw-outline-primary-light">
     <ConstructorContainer v-if="true" @showGraph="showGraph" @editObject="editObject" @editArray="editArray"/>
     <div class="tw-w-full tw-h-full tw-flex tw-flex-col tw-gap-2 tw-overflow-hidden">
-      <div class="tw-h-8 tw-text-xl tw-font-extrabold tw-text-f1-white">
-        Fantasy F1 Predictor v2
-      </div>
       <div class="tw-h-64 tw-flex tw-flex-row tw-gap-2">
         <GrandPrixContainer :start-index="grandPrixStartIndex"/>
         <TeamDisplay @editArray="editArray" @updateComparativeTeam="updateComparativeTeam" :user-teams="userTeams"/>
