@@ -151,7 +151,7 @@ export default {
         {{ getTitle }}
       </div>
       <CloseButton class="hover-child tw-transition-opacity" @close="exit">
-        <span class="material-icons">close</span>
+        <span class="material-symbols-outlined tw-font-light">close</span>
       </CloseButton>
     </div>
     <div class="tw-border-primary-light tw-border-y-1 tw-flex tw-flex-col tw-gap-2 tw-py-2 tw-px-4 tw-bg-primary-dark">
@@ -170,11 +170,11 @@ export default {
     </div>
     <div class="tw-flex tw-justify-between tw-h-14 tw-gap-2 tw-border-primary-light tw-none tw-bg-primary-dark tw-p-2 tw-rounded-b-lg">
       <ContinueButton @continue="previous" :class="[`${currentIndex > 0 ? '' : 'tw-invisible'}`]">
-        <span class="material-symbols-outlined">arrow_back</span>
+        <span class="material-symbols-outlined tw-px-2 tw-font-light">arrow_back</span>
       </ContinueButton>
-      <ContinueButton @continue="close">Save & Close</ContinueButton>
+      <ContinueButton @continue="close" class="tw-px-2">Save & Close</ContinueButton>
       <ContinueButton @continue="next" :class="`${currentIndex < overlayArray.length-1 ? '' : 'tw-invisible'}`">
-        <span class="material-symbols-outlined">arrow_forward</span>
+        <span class="material-symbols-outlined tw-px-2 tw-font-light">arrow_forward</span>
       </ContinueButton>
     </div>
   </div>

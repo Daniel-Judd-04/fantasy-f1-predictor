@@ -92,7 +92,7 @@ export default {
           },
           y: {
             suggestedMin: 0,
-            suggestedMax: isDriver(this.overlayObject) ? 30 : 50,
+            suggestedMax: isDriver(this.overlayObject) ? 26 : 44,
             type: 'linear',
             display: true,
             position: 'left',
@@ -114,7 +114,6 @@ export default {
             },
             grid: {
               drawOnChartArea: false,
-              color: primary
             }
           }
         }
@@ -158,7 +157,7 @@ export default {
         {{ overlayObject.fullName }}
       </div>
       <CloseButton class="hover-child tw-transition-opacity" @close="exit">
-        <span class="material-icons">close</span>
+        <span class="material-symbols-outlined tw-font-light">close</span>
       </CloseButton>
     </div>
     <div class="tw-bg-primary-dark tw-border-t-1 tw-border-primary-light tw-p-4 tw-pt-2 tw-rounded-b-lg">

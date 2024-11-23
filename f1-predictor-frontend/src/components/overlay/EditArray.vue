@@ -3,7 +3,7 @@ import CloseButton from "@/components/common/CloseButton.vue";
 import ContinueButton from "@/components/common/ContinueButton.vue";
 import UserInput from "@/components/common/UserInput.vue";
 import {getConciseName, getDriver, sort} from "@/utils/common";
-import {mapActions, mapGetters} from "vuex";
+import {mapGetters} from "vuex";
 
 export default {
   name: 'EditArray',
@@ -15,14 +15,14 @@ export default {
   },
   data() {
     return {
-      addingConstructor: false,
+      addingObject: false,
       tempAdditions: [],
       tempActiveStatuses: [],
     }
   },
   components: {UserInput, CloseButton, ContinueButton},
   computed: {
-    ...mapGetters(['allDrivers', 'allConstructors']),
+    ...mapGetters(['allDrivers', 'allConstructors', 'userTeams']),
     isLoaded() {
       return this.overlayArray.length > 0;
     },
@@ -37,45 +37,67 @@ export default {
         return false;
       }
       return Object.prototype.hasOwnProperty.call(this.overlayArray[0], 'constructorId');
+    },
+    isUserTeam() {
+      if (!this.isLoaded) {
+        return false;
+      }
+      return Object.prototype.hasOwnProperty.call(this.overlayArray[0], 'teamName');
     }
   },
   beforeMount() {
     // Set active status
-    for (let i = 0; i < this.overlayArray.length; i++) {
-      let id;
-      if (this.isDriver) {
-        id = this.overlayArray[i].driverId;
-      } else {
-        id = this.overlayArray[i].constructorId;
+    if (!this.isUserTeam) {
+      for (let i = 0; i < this.overlayArray.length; i++) {
+        let id;
+        if (this.isDriver) {
+          id = this.overlayArray[i].driverId;
+        } else {
+          id = this.overlayArray[i].constructorId;
+        }
+        this.tempActiveStatuses[id] = this.overlayArray[i].active;
       }
-      this.tempActiveStatuses[id] = this.overlayArray[i].active;
     }
   },
   methods: {
     getConciseName,
     getDriver,
-    ...mapActions(['fetchDrivers', 'fetchConstructors']),
     getTitle() {
       if (!this.isLoaded) {
         return 'No Data';
       }
-      return (this.addingConstructor ? 'Add' : 'Edit') + ' ' + (this.isConstructor ? 'Constructor' : 'Driver') + (this.addingConstructor ? '' : 's');
+      let objectType = '???';
+      if (this.isDriver) {
+        objectType = 'Driver';
+      } else if (this.isConstructor) {
+        objectType = 'Constructor';
+      } else if (this.isUserTeam) {
+        objectType = 'Team';
+      }
+      return `${this.addingObject ? 'Add' : 'Edit'} ${objectType}${this.addingObject ? '' : 's'}`;
     },
     validInputs() {
       if (this.isDriver) {
         return document.getElementById('fullName').value !== '' &&
-            document.getElementById('shortName').value !== '' &&
+            document.getElementById('shortName').value.length === 3 &&
             document.getElementById('country').value !== '' &&
             document.getElementById('fantasyPrice').value !== '';
       } else if (this.isConstructor) {
         return document.getElementById('fullName').value !== '' &&
-            document.getElementById('shortName').value !== '' &&
+            document.getElementById('shortName').value.length === 3 &&
             document.getElementById('country').value !== '' &&
             document.getElementById('fantasyPrice').value !== '';
+      } else if (this.isUserTeam) {
+        const drivers = document.getElementById('drivers').value.split(',');
+        const constructors = document.getElementById('constructors').value.split(',');
+        return document.getElementById('teamName').value !== '' &&
+            document.getElementById('teamOwner').value !== '' &&
+            document.getElementById('freeTransfers').value !== '' &&
+            drivers.length === 5 && constructors.length === 2 &&
+            document.getElementById('remainingBudget').value !== '';
       }
     },
-    addConstructor() {
-      // Temp add a constructor
+    addObject() {
       const newAddition = {};
       if (this.isDriver) {
         newAddition.carNumber = parseInt(document.getElementById('carNumber').value);
@@ -87,8 +109,17 @@ export default {
         newAddition.country = document.getElementById('country').value;
         newAddition.fantasyPrice = parseFloat(document.getElementById('fantasyPrice').value);
         newAddition.active = true;
+
+        this.tempActiveStatuses.push(true);
       }
-      this.tempActiveStatuses.push(true);
+      if (this.isUserTeam) {
+        newAddition.teamName = document.getElementById('teamName').value;
+        newAddition.teamOwner = document.getElementById('teamOwner').value;
+        newAddition.freeTransfers = parseInt(document.getElementById('freeTransfers').value);
+        newAddition.drivers = document.getElementById('drivers').value.split(',');
+        newAddition.constructors = document.getElementById('constructors').value.split(',');
+        newAddition.remainingBudget = parseFloat(document.getElementById('remainingBudget').value);
+      }
 
       this.tempAdditions.push(newAddition);
       console.log(this.tempAdditions);
@@ -99,30 +130,32 @@ export default {
         await this.$store.dispatch('add', this.tempAdditions[i]);
       }
 
-      // Update any changes in active status
-      for (let i = 0; i < this.overlayArray.length; i++) {
-        const id = this.isDriver ? this.overlayArray[i].driverId : this.overlayArray[i].constructorId;
-        if (this.overlayArray[i].active !== this.tempActiveStatuses[id]) {
-          const clone = this.overlayArray[i];
-          clone.active = this.tempActiveStatuses[id];
-          await this.$store.dispatch('update', clone);
+      if (!this.isUserTeam) {
+        // Update any changes in active status
+        for (let i = 0; i < this.overlayArray.length; i++) {
+          const id = this.isDriver ? this.overlayArray[i].driverId : this.overlayArray[i].constructorId;
+          if (this.overlayArray[i].active !== this.tempActiveStatuses[id]) {
+            const clone = this.overlayArray[i];
+            clone.active = this.tempActiveStatuses[id];
+            await this.$store.dispatch('update', clone);
+          }
         }
-      }
 
-      // Update sorting method
-      if (document.getElementById('sort-by-points').checked) {
-        sort(this.overlayArray, 'points');
-      } else if (document.getElementById('sort-by-fantasyPoints').checked) {
-        sort(this.overlayArray, 'fantasyPoints');
-      } else if (document.getElementById('sort-by-fantasyPrice').checked) {
-        sort(this.overlayArray, 'fantasyPrice');
+        // Update sorting method
+        if (document.getElementById('sort-by-points').checked) {
+          sort(this.overlayArray, 'points');
+        } else if (document.getElementById('sort-by-fantasyPoints').checked) {
+          sort(this.overlayArray, 'fantasyPoints');
+        } else if (document.getElementById('sort-by-fantasyPrice').checked) {
+          sort(this.overlayArray, 'fantasyPrice');
+        }
       }
     },
     async close() {
       // Add new constructor to array
-      if (this.addingConstructor) {
+      if (this.addingObject) {
         if (this.validInputs()) {
-          this.addConstructor();
+          this.addObject();
           // Exit
           this.exit();
         }
@@ -134,8 +167,8 @@ export default {
       }
     },
     exit() {
-      if (this.addingConstructor) {
-        this.addingConstructor = false;
+      if (this.addingObject) {
+        this.addingObject = false;
       } else {
         this.$emit('exit');
       }
@@ -152,13 +185,19 @@ export default {
         {{ getTitle() }}
       </div>
       <CloseButton class="hover-child tw-transition-opacity" @close="exit">
-        <span class="material-icons">close</span>
+        <span class="material-symbols-outlined tw-font-light">close</span>
       </CloseButton>
     </div>
     <!--    Adding a constructor -->
-    <div v-if="addingConstructor" class="tw-border-primary-light tw-border-b-1 tw-flex tw-flex-col tw-gap-2 tw-py-2 tw-px-4 tw-bg-primary-dark">
+    <div v-if="addingObject" class="tw-border-primary-light tw-border-b-1 tw-flex tw-flex-col tw-gap-2 tw-py-2 tw-px-4 tw-bg-primary-dark">
       <UserInput name="Full Name" v-if="isDriver || isConstructor"/>
       <UserInput name="Short Name" v-if="isDriver || isConstructor"/>
+      <UserInput name="Team Name" v-if="isUserTeam"/>
+      <UserInput name="Team Owner" v-if="isUserTeam"/>
+      <UserInput name="Free Transfers" type="number" :step="1" :default-value="'3'" v-if="isUserTeam"/>
+      <UserInput name="Drivers" :default-value="'VER,PER,NOR,PIA,ALO'" v-if="isUserTeam"/>
+      <UserInput name="Constructors" :default-value="'RBR,MCL'" v-if="isUserTeam"/>
+      <UserInput name="Remaining Budget" type="number" :step="0.1" :default-value="'0.0'" v-if="isUserTeam"/>
       <UserInput name="Country" v-if="isDriver || isConstructor"/>
       <div class="tw-flex" v-if="isDriver">
         <div>Constructor</div>
@@ -173,7 +212,7 @@ export default {
       <UserInput name="Fantasy Price" type="number" :step="0.1" :default-value="'0.0'" v-if="isDriver || isConstructor"/>
     </div>
     <!--    Sorting constructors -->
-    <div v-if="!addingConstructor" class="tw-border-primary-light tw-border-y-1 tw-flex tw-flex-col tw-p-2 tw-bg-primary-dark">
+    <div v-if="!addingObject && !isUserTeam" class="tw-border-primary-light tw-border-y-1 tw-flex tw-flex-col tw-p-2 tw-bg-primary-dark">
       <div class="segmented-control tw-rounded tw-full tw-border-1 tw-border-primary-light">
         <input type="radio" id="sort-by-points" name="options">
         <label for="sort-by-points">Points</label>
@@ -185,16 +224,17 @@ export default {
       </div>
     </div>
     <!--    Deactivate constructors -->
-    <div v-if="!addingConstructor" class="tw-border-primary-light tw-border-b-1 tw-flex tw-flex-col tw-gap-2 tw-py-2 tw-px-2 tw-bg-primary-dark">
+    <div v-if="!addingObject" class="tw-border-primary-light tw-border-b-1 tw-flex tw-flex-col tw-gap-2 tw-py-2 tw-px-2 tw-bg-primary-dark">
       <div v-if="isDriver" class="tw-flex tw-flex-col tw-gap-2">
         <div class="tw-flex tw-gap-2"
-             v-for="constructor in allConstructors" :key="constructor.code">
-          <div :class="`tw-w-1/${constructor.drivers.length}`" class="tw-flex tw-pl-2 tw-border-1 tw-border-primary-light tw-bg-primary-light tw-bg-opacity-5 tw-rounded"
+             v-for="constructor in allConstructors.filter(c => c.drivers.length > 0)" :key="constructor.code">
+          <div :class="`tw-w-1/${constructor.drivers.length}`"
+               class="tw-flex tw-items-center tw-justify-between tw-px-2 tw-border-1 tw-border-primary-light tw-bg-primary-light tw-bg-opacity-5 tw-rounded"
                v-for="driverId in constructor.drivers" :key="driverId">
-            <div class="tw-mr-auto">
+            <div>
               {{ getDriver(driverId).shortName }}
             </div>
-            <div class="tw-cursor-pointer tw-px-2 tw-w-20 tw-text-right"
+            <div class="tw-cursor-pointer tw-text-right tw-text-sm"
                  @click="tempActiveStatuses[driverId] = !tempActiveStatuses[driverId]"
                  :id="getDriver(driverId).shortName + '-active'">
               {{ tempActiveStatuses[driverId] ? 'Active' : 'Inactive' }}
@@ -202,7 +242,7 @@ export default {
           </div>
         </div>
       </div>
-      <div v-else class="tw-flex tw-flex-col tw-gap-2">
+      <div v-else-if="isConstructor" class="tw-flex tw-flex-col tw-gap-2">
         <div class="tw-pl-2 tw-flex tw-border-1 tw-border-primary-light tw-bg-primary-light tw-bg-opacity-5 tw-rounded"
              v-for="constructor in allConstructors" :key="constructor.code">
           <div class="tw-mr-auto">
@@ -215,12 +255,29 @@ export default {
           </div>
         </div>
       </div>
-      <ContinueButton @continue="addingConstructor = true">
-        <span class="material-icons">add</span>
+      <div v-else-if="isUserTeam" class="tw-flex tw-flex-col tw-gap-2">
+        <div class="tw-px-2 tw-flex tw-border-1 tw-border-primary-light tw-bg-primary-light tw-bg-opacity-5 tw-rounded"
+             v-for="team in userTeams" :key="team.code">
+          <div class="tw-mr-auto">
+            {{ team.teamName }} ({{ team.teamOwner }})
+          </div>
+        </div>
+      </div>
+      <ContinueButton @continue="addingObject = true">
+        <span class="material-symbols-outlined tw-font-light">add</span>
       </ContinueButton>
+      <div v-if="tempAdditions.length > 0" class="tw-flex tw-flex-col tw-gap-2">
+        <div class="tw-px-2 tw-flex tw-border-1 tw-border-dashed tw-border-primary-light tw-text-primary-light tw-bg-primary-light tw-bg-opacity-5 tw-rounded"
+             v-for="newObject in tempAdditions" :key="newObject.code">
+          <div class="tw-mr-auto">
+            {{ isUserTeam ? newObject.teamName + ' (' + newObject.teamOwner + ')' : newObject.fullName }}
+          </div>
+          <div>NEW</div>
+        </div>
+      </div>
     </div>
     <div class="tw-flex tw-border-primary-light tw-none tw-bg-primary-dark tw-p-2 tw-rounded-b-lg">
-      <ContinueButton class="tw-ml-auto tw-h-10" @continue="close">{{ addingConstructor ? 'Save' : 'Save & Close' }}</ContinueButton>
+      <ContinueButton class="tw-ml-auto tw-h-10 tw-px-2" @continue="close">{{ addingObject ? 'Save' : 'Save & Close' }}</ContinueButton>
     </div>
   </div>
 </template>
