@@ -153,15 +153,15 @@ export default {
 
 <template>
   <div
-      class="tw-w-96 tw-h-full tw-transition-colors tw-bg-gradient-to-bl tw-from-primary-dark tw-to-200% tw-flex tw-flex-col tw-border-1 tw-rounded"
-      :class="[index === currentIndex ? 'tw-to-f1-red tw-text-f1-white tw-border-primary-light' : 'tw-to-primary tw-text-primary-light tw-border-primary']">
-    <div class="tw-flex tw-flex-row tw-py-1">
-      <div class="tw-mr-auto tw-text-left tw-pl-2">
+      class="tw-w-96 tw-h-full tw-transition-colors tw-bg-gradient-to-bl tw-from-primary-dark tw-to-200% tw-flex tw-flex-col tw-outline tw-outline-1 -tw-outline-offset-1 tw-rounded"
+      :class="[index === currentIndex ? 'tw-to-f1-red tw-text-f1-white tw-outline-primary-light' : 'tw-to-primary tw-text-primary-light tw-outline-primary']">
+    <div class="tw-flex tw-flex-row">
+      <div class="tw-mr-auto tw-text-left tw-pl-2 tw-py-1">
         <div class="tw-font-bold tw-text-xl">{{ getTitle() }}</div>
         <div>{{ getDate() }}</div>
       </div>
-      <div v-if="grandPrix.sprint" class="tw-h-full tw-pr-2">
-        <span class="material-symbols-outlined">sprint</span>
+      <div v-if="grandPrix.sprint" class="tw-mr-2">
+        <span class="material-symbols-outlined tw-font-light tw-text-3xl">sprint</span>
       </div>
     </div>
     <div class="tw-w-full tw-h-full tw-bg-primary-dark tw-rounded-b tw-flex tw-flex-col tw-pt-1">
@@ -199,24 +199,24 @@ export default {
       </div>
 
       <div v-if="!inFuture" class="tw-flex tw-h-8 tw-flex-row tw-justify-between tw-px-2 tw-items-center tw-py-1">
-        <div class="tw-flex tw-items-center tw-gap-1">
-          <span class="material-symbols-outlined">heat</span>
+        <div class="tw-flex tw-items-center">
+          <span class="material-symbols-outlined tw-font-light">heat</span>
           <div class="tw-pt-0.5">{{ round(grandPrix.airTemperature, 0) }}<span class="tw-text-xs">°C</span></div>
         </div>
-        <div class="tw-flex tw-items-center tw-gap-1">
-          <span class="material-symbols-outlined">road</span>
+        <div class="tw-flex tw-items-center">
+          <span class="material-symbols-outlined tw-font-light">road</span>
           <div class="tw-pt-0.5">{{ round(grandPrix.trackTemperature, 0) }}<span class="tw-text-xs">°C</span></div>
         </div>
-        <div class="tw-flex tw-items-center tw-gap-1">
-          <span class="material-symbols-outlined">water_do</span>
+        <div class="tw-flex tw-items-center">
+          <span class="material-symbols-outlined tw-font-light">water_do</span>
           <div class="tw-pt-0.5">{{ round(grandPrix.humidity, 0) }}<span class="tw-text-xs">%</span></div>
         </div>
-        <div class="tw-flex tw-items-center tw-gap-1">
-          <span class="material-symbols-outlined">air</span>
-          <div class="tw-pt-0.5">{{ round(grandPrix.windSpeed, 1) }}<span class="tw-text-xs">mph</span></div>
+        <div class="tw-flex tw-items-center">
+          <span class="material-symbols-outlined tw-font-light">air</span>
+          <div class="tw-ml-0.5 tw-pt-0.5">{{ round(grandPrix.windSpeed, 1) }}<span class="tw-text-xs">mph</span></div>
         </div>
         <div v-if="grandPrix.rainfall" class="tw-flex tw-items-center">
-          <span class="material-symbols-outlined">rainy_light</span>
+          <span class="material-symbols-outlined tw-font-light">rainy_light</span>
         </div>
       </div>
       <div v-if="inFuture" class="tw-h-8 tw-font-bold tw-rounded-b tw-bg-primary tw-pt-0.5 tw-mt-1">
