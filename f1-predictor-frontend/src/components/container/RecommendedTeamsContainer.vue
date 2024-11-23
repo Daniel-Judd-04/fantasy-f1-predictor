@@ -38,10 +38,11 @@ export default {
   methods: {
     ...mapActions(['setRecommendedTeams']),
     async loadRecommendedTeams() {
-      this.$store.dispatch('setRecommendedTeams', []);
       this.loadingMessage = {
-        stage: 0
+        stage: 0.1,
+        message: "Loading Recommended Teams",
       }
+      this.$store.dispatch('setRecommendedTeams', []);
 
       const eventSource = new EventSource(`http://localhost:8081/api/teams/recommended/limit=${50}`);
 
@@ -155,39 +156,44 @@ export default {
   <div
       class="tw-w-full tw-h-full tw-flex tw-flex-col tw-bg-gradient-to-bl tw-to-f1-red tw-from-primary-dark tw-to-200% tw-outline tw-outline-1 tw-outline-primary-light -tw-outline-offset-1 tw-rounded-lg">
     <div class="tw-flex tw-gap-2 tw-border-b-1 tw-border-primary-light tw-p-2 tw-text-f1-white">
-      <div class="tw-font-bold tw-mt-0.5 tw-text-xl tw-mr-auto">
+      <div class="tw-font-bold tw-mt-0.5 tw-text-2xl tw-mr-auto">
         Recommended Fantasy Teams
       </div>
-      <div class="tw-flex tw-items-center tw-gap-2">
-        Sort by
+      <div :class="`${recommendedTeams.length > 0 ? '' : 'tw-invisible'}`" class="tw-flex tw-items-center">
+        <div class="tw-mt-0.5">Sort by</div>
         <select id="sortOption" @change="resetVisibleTeams"
-                class="tw-px-2 tw-appearance-none tw-border-1 tw-border-primary-light tw-bg-primary-light tw-bg-opacity-5 tw-text-f1-white tw-text-center">
+                class="tw-px-2 tw-ml-1 tw-appearance-none tw-rounded-r-none tw-border-1 tw-border-primary-light tw-bg-primary-light tw-bg-opacity-5 tw-text-f1-white tw-text-center">
           <option :value="sortOption" v-for="sortOption in sortOptions" :key="sortOption.code">
             {{ sortOption }}
           </option>
         </select>
         <div
-            class="tw-flex tw-items-center tw-px-1 tw-border-1 tw-border-primary-light tw-rounded tw-bg-primary-light tw-bg-opacity-5 tw-text-f1-white tw-cursor-pointer"
+            class="tw-flex tw-items-center tw-px-1 tw-mr-2 tw-border-l-0 tw-border-1 tw-border-primary-light tw-rounded-r tw-bg-primary-light tw-bg-opacity-5 tw-text-f1-white tw-cursor-pointer"
             @click="changeSortOrder()" id="sortOrder" :title="`Sorted in ${sortDesc ? 'descending' : 'ascending'} order`">
           <span class="material-symbols-outlined tw-text-base">{{ sortDesc ? 'south_east' : 'north_east' }}</span>
         </div>
-        <ContinueButton @continue="loadRecommendedTeams"
-                        class="tw-ml-2">
+        <ContinueButton @continue="loadRecommendedTeams">
           <span class="material-symbols-outlined tw-mx-1 tw-text-base">refresh</span>
         </ContinueButton>
       </div>
     </div>
     <div class="tw-overflow-hidden tw-h-full tw-bg-primary-dark tw-rounded-b-lg tw-text-f1-white">
       <LoadingBar v-if="recommendedTeams.length === 0" :success="loadingMessage.success" :max-stage="loadingMessage.maxStage" :stage="loadingMessage.stage"/>
-      <div v-if="recommendedTeams.length === 0 && loadingMessage.stage > 0" class="tw-text-xl tw-mt-12">
-        Loading... {{ loadingMessage.message }}
+      <div v-if="recommendedTeams.length === 0" class="tw-h-full tw-flex tw-items-center tw-justify-center">
+        <div v-if="loadingMessage.stage > 0" class="tw-flex tw-flex-col tw-text-xl ">
+          <div>Loading...</div>
+          <div class="tw-text-primary-light">{{ loadingMessage.message }}</div>
+        </div>
+        <ContinueButton v-else @continue="loadRecommendedTeams" class="tw-text-xl tw-font-bold tw-py-2 tw-px-4">
+          Generate Teams
+        </ContinueButton>
       </div>
       <div class="tw-h-full tw-flex tw-flex-col tw-px-1" v-if="recommendedTeams.length > 0 && comparativeTeam">
         <div class="tw-flex tw-gap-2 tw-border-l-1 tw-border-l-primary-dark tw-py-1 tw-font-bold">
           <div class="tw-w-1/12 tw-border-r-1 tw-border-primary-light">Value</div>
           <div class="hover-parent tw-relative tw-w-5/12">
             <div class="not-hover-child tw-w-full tw-absolute tw-transition-opacity">Statistics</div>
-            <div class="hover-child tw-absolute tw-w-full tw-flex tw-justify-between tw-tw-transition-opacity">
+            <div class="hover-child tw-absolute tw-w-full tw-flex tw-justify-between tw-transition-opacity tw-font-light">
               <div class="tw-w-9" title="Applied Chip?"><span class="material-symbols-outlined">poker_chip</span></div>
               <div class="tw-w-1/5" title="Average Fantasy Points Per Grand Prix"><span class="material-symbols-outlined">joystick</span></div>
               <div class="tw-w-1/5" title="Average Recent Points Per Grand Prix"><span class="material-symbols-outlined">timer</span></div>
@@ -204,7 +210,7 @@ export default {
         <div class="tw-h-full tw-flex tw-flex-col tw-gap-2">
           <CompactTeamDisplay v-for="team in visibleTeams" :key="team.code" :team="team" :comparative-team="comparativeTeam"/>
         </div>
-        <div class="tw-flex tw-justify-between tw-items-center tw-py-1 tw-px-1 tw-text-f1-white">
+        <div class="tw-flex tw-justify-between tw-items-center tw-py-1 tw-text-f1-white">
           <ContinueButton :class="`${startIndex > 1 ? '' : 'tw-invisible'}`" @continue="previousPage">
             <span class="material-symbols-outlined tw-text-base tw-mx-1">arrow_back</span>
           </ContinueButton>

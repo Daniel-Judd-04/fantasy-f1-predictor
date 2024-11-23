@@ -116,7 +116,7 @@ export default {
           {{ calculateTransfers }}
         </div>
         <div class="tw-flex tw-items-center tw-mt-0.5">
-          <span class="material-symbols-outlined tw-text-sm">shuffle</span>
+          <span class="material-symbols-outlined tw-text-sm tw-font-light">shuffle</span>
         </div>
       </div>
     </div>
