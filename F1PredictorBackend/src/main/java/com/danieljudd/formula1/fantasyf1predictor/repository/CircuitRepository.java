@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CircuitRepository extends JpaRepository<Circuit, Long> {
 
+  Circuit findByCircuitId(int circuitId);
+
   Circuit findByFullName(String fullName);
 
   List<Circuit> findByCountry(String country);

@@ -17,19 +17,25 @@ public class DriverService {
   @Autowired
   private ConstructorRepository constructorRepository;
 
-  public Driver updateDriver(Driver driver) {
+  public Driver updateDriver(DriverDTO driver) {
     // Assuming driverId is part of the Driver object, find the existing driver by ID
     Driver existingDriver = driverRepository.findByDriverId(driver.getDriverId());
+
+    Constructor constructor = constructorRepository.findByConstructorId(driver.getConstructor());
 
     if (existingDriver == null) {
       throw new IllegalArgumentException(
           "Driver " + driver.getFullName() + " not found with id "
               + driver.getDriverId());
+    } else if (constructor == null) {
+      throw new IllegalArgumentException(
+          "Constructor with id " + driver.getConstructor() + " not found");
     }
 
     // Update fields
     existingDriver.setFullName(driver.getFullName());
     existingDriver.setCountry(driver.getCountry());
+    existingDriver.setConstructor(constructor);
     existingDriver.setPoints(driver.getPoints());
     existingDriver.setFantasyPoints(driver.getFantasyPoints());
     existingDriver.setFantasyPrice(driver.getFantasyPrice());
@@ -47,10 +53,10 @@ public class DriverService {
     }
 
     Constructor constructor = constructorRepository.findByConstructorId(
-        driverDTO.getConstructorId());
+        driverDTO.getConstructor());
     if (constructor == null) {
       throw new IllegalArgumentException(
-          "Constructor with id " + driverDTO.getConstructorId() + " not found");
+          "Constructor with id " + driverDTO.getConstructor() + " not found");
     }
 
     Driver driver = new Driver();
@@ -64,5 +70,14 @@ public class DriverService {
 
     System.out.println("Adding driver: " + driver + " with constructor " + constructor);
     return driverRepository.save(driver);
+  }
+
+  public boolean deleteDriver(int id) {
+    if (driverRepository.findByDriverId(id) == null) {
+      throw new IllegalArgumentException("Driver with id=" + id + " not found");
+    }
+
+    driverRepository.deleteById(id);
+    return true;
   }
 }

@@ -31,17 +31,6 @@ public class CircuitController {
     return circuitRepository.findById(id).orElse(null);
   }
 
-//  @GetMapping("/date={givenDate}")
-//  public Circuit getCircuitByDate(@PathVariable String givenDate) {
-//    // Given format     "yyyy,MM,dd,HH,mm"
-//    // Example format   "2024,01,30,12,30"
-//    // Required format  "yyyy-MM-ddTHH:mm:00Z"
-//    String[] parts = givenDate.split(",");
-//    String formattedDate =
-//        parts[0] + "-" + parts[1] + "-" + parts[2] + "T" + parts[3] + ":" + parts[4] + ":00Z";
-//    return circuitRepository.findByDate(Instant.parse(formattedDate));
-//  }
-
   @GetMapping("/country={country}")
   public List<Circuit> getCircuitByCountry(@PathVariable String country) {
     return circuitRepository.findByCountry(country);

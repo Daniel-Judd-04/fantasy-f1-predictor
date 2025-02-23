@@ -5,14 +5,15 @@ import java.util.List;
 import lombok.Getter;
 
 @Getter
-public class TeamInputDTO {
+public class UserTeamInputDTO {
 
-  private String teamOwner;
-  private String teamName;
+  private int teamId;
+
+  private String owner;
+  private String name;
 
   private BigDecimal remainingBudget;
   private byte freeTransfers;
-  private String activeChip;
 
   private List<Integer> driverIds;
   private List<Integer> constructorIds;

@@ -1,5 +1,6 @@
 package com.danieljudd.formula1.fantasyf1predictor.model;
 
+import com.danieljudd.formula1.fantasyf1predictor.model.result.Result;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -13,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -27,7 +29,7 @@ import lombok.NoArgsConstructor;
 @JsonIdentityInfo(
     generator = ObjectIdGenerators.PropertyGenerator.class,
     property = "grandPrixId")
-public class GrandPrix {
+public class GrandPrix implements Comparable<GrandPrix> {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,12 +42,10 @@ public class GrandPrix {
 
   @OneToMany(mappedBy = "grandPrix", orphanRemoval = true)
   @JsonIdentityReference(alwaysAsId = true)
-  private List<RaceResult> raceResults = new ArrayList<>();
+  private List<Result> results = new ArrayList<>();
 
   @Column(unique = true)
   private Instant startTime;
-
-  @Column(name = "season", columnDefinition = "SMALLINT")
   private int season;
   private byte round;
 
@@ -62,14 +62,12 @@ public class GrandPrix {
   private boolean rainfall;
   private BigDecimal windSpeed;
 
-  public GrandPrix(Circuit circuit, Instant startTime, int season, byte round, String fullName,
+  public GrandPrix(Circuit circuit, Instant startTime, String fullName,
       boolean sprint,
       byte yellowFlags, byte redFlags, BigDecimal airTemperature, BigDecimal trackTemperature,
       BigDecimal humidity, boolean rainfall, BigDecimal windSpeed) {
     this.circuit = circuit;
     this.startTime = startTime;
-    this.season = season;
-    this.round = round;
     this.fullName = fullName;
     this.sprint = sprint;
     this.yellowFlags = yellowFlags;
@@ -79,5 +77,14 @@ public class GrandPrix {
     this.humidity = humidity;
     this.rainfall = rainfall;
     this.windSpeed = windSpeed;
+  }
+
+  public int getSeason() {
+    return startTime.atZone(ZoneId.systemDefault()).getYear();
+  }
+
+  @Override
+  public int compareTo(GrandPrix o) {
+    return startTime.compareTo(o.startTime);
   }
 }

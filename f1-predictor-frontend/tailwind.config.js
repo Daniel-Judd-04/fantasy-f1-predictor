@@ -1,6 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 const plugin = require('tailwindcss/plugin');
 
+const darkMode = true;
+
 module.exports = {
     prefix: 'tw-',
     content: [
@@ -17,9 +19,9 @@ module.exports = {
             colors: {
                 // Custom colors
                 primary: {
-                    light: '#4a5568',
-                    DEFAULT: '#2d3748',
-                    dark: '#1a202c',
+                    light: darkMode ? '#4a5568' : '#6d7481',
+                    DEFAULT: darkMode ? '#2d3748' : '#bac6d7',
+                    dark: darkMode ? '#1a202c' : '#e7eff5',
                 }
                 ,
                 team: {
@@ -36,9 +38,9 @@ module.exports = {
                 }
                 ,
                 f1: {
-                    red: '#FF1E00',
-                    black: '#15151E',
-                    white: '#e7e1e1',
+                    red: '#D11A00',
+                    black: darkMode ? '#15151E' : '#f7fafc',
+                    white: darkMode ? '#c9c3c3' : '#15151E',
                 },
             },
             height: {

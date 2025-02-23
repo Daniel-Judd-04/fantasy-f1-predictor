@@ -1,11 +1,17 @@
 package com.danieljudd.formula1.fantasyf1predictor.controller;
 
+import com.danieljudd.formula1.fantasyf1predictor.DTO.GrandPrixInputDTO;
 import com.danieljudd.formula1.fantasyf1predictor.model.GrandPrix;
 import com.danieljudd.formula1.fantasyf1predictor.repository.GrandPrixRepository;
+import com.danieljudd.formula1.fantasyf1predictor.service.GrandPrixService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +21,9 @@ public class GrandPrixController {
 
   @Autowired
   private GrandPrixRepository grandPrixRepository;
+
+  @Autowired
+  private GrandPrixService grandPrixService;
 
   @GetMapping
   public List<GrandPrix> getAllGrandPrix() {
@@ -26,14 +35,9 @@ public class GrandPrixController {
     return grandPrixRepository.findById(id).orElse(null);
   }
 
-  @GetMapping("/season={season}")
-  public List<GrandPrix> getGrandPrixBySeason(@PathVariable int season) {
-    return grandPrixRepository.findBySeason(season);
-  }
-
-  @GetMapping("/season={season}&round={round}")
-  public GrandPrix getGrandPrixBySeasonAndRound(@PathVariable int season,
-      @PathVariable byte round) {
-    return grandPrixRepository.findBySeasonAndRound(season, round);
+  @PostMapping()
+  public ResponseEntity<GrandPrix> addGrandPrix(@RequestBody GrandPrixInputDTO grandPrix) {
+    GrandPrix newGrandPrix = grandPrixService.addGrandPrix(grandPrix);
+    return new ResponseEntity<>(newGrandPrix, HttpStatus.CREATED);
   }
 }

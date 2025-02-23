@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,16 +37,6 @@ public class ConstructorController {
     return constructorRepository.count();
   }
 
-  @GetMapping("/id={id}")
-  public Constructor getConstructorById(@PathVariable Long id) {
-    return constructorRepository.findById(id).orElse(null);
-  }
-
-  @GetMapping("/shortName={shortName}")
-  public Constructor getConstructorByShortName(@PathVariable String shortName) {
-    return constructorRepository.findByShortName(shortName.toUpperCase());
-  }
-
   @PutMapping
   public ResponseEntity<Constructor> updateConstructor(@RequestBody Constructor constructor) {
     Constructor updatedConstructor = constructorService.updateConstructor(constructor);
@@ -56,5 +47,14 @@ public class ConstructorController {
   public ResponseEntity<Constructor> addConstructor(@RequestBody ConstructorDTO constructor) {
     Constructor newConstructor = constructorService.addConstructor(constructor);
     return new ResponseEntity<>(newConstructor, HttpStatus.CREATED);
+  }
+
+  @DeleteMapping("/id={id}")
+  public ResponseEntity<String> deleteConstructor(@PathVariable int id) {
+    if (constructorService.deleteConstructor(id)) {
+      return new ResponseEntity<>("Constructor deleted", HttpStatus.OK);
+    }
+    return new ResponseEntity<>("Error deleting constructor with id: " + id,
+        HttpStatus.BAD_REQUEST);
   }
 }

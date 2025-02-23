@@ -4,16 +4,15 @@
     <ConstructorContainer v-if="true" @showGraph="showGraph" @editObject="editObject" @editArray="editArray"/>
     <div class="tw-w-full tw-h-full tw-flex tw-flex-col tw-gap-2 tw-overflow-hidden">
       <div class="tw-h-64 tw-flex tw-flex-row tw-gap-2">
-        <GrandPrixContainer :start-index="grandPrixStartIndex"/>
+        <GrandPrixContainer @showGraph="showGraph" @editArray="editArray" @addObject="addObject" @updateGrandPrix="updateGrandPrix" :start-index="grandPrixStartIndex"/>
         <TeamDisplay @editArray="editArray" @updateComparativeTeam="updateComparativeTeam" :user-teams="userTeams"/>
       </div>
-      <RecommendedTeamsContainer :comparative-team="currentTeam"/>
+      <RecommendedTeamsContainer :comparative-team="currentTeam" :grand-prix="grandPrix"/>
     </div>
     <DriverContainer v-if="true" @showGraph="showGraph" @editObject="editObject" @editArray="editArray"/>
   </div>
-  <OverlayContainer @exit="closeOverlay()" v-if="showOverlay" :overlay-object="overlayObject"
-                    :overlay-array="overlayArray" :start-index="overlayIndex" :overlay-type="overlayType"/>
-  <div :style="{ height: `${appLoading ? '100' : '0'}vh` }"
+  <OverlayContainer @exit="closeOverlay()" v-if="showOverlay" :overlay-data="overlayData"/>
+  <div :style="{ height: `${loadingMessage.stage !== loadingMessage.maxStage ? '100' : '0'}vh` }"
        class="tw-w-screen tw-overflow-hidden tw-transition-all tw-absolute tw-flex tw-items-center tw-justify-center tw-bg-f1-black tw-top-0 tw-text-f1-white">
     <div>
       <div class="tw-font-light tw-text-2xl tw-flex tw-flex-col tw-gap-2 tw-items-center">
@@ -31,41 +30,43 @@
 
 <script>
 import DriverContainer from "@/components/container/DriverContainer.vue";
-import {mapActions, mapGetters} from "vuex";
+import {mapGetters} from "vuex";
 import ConstructorContainer from "@/components/container/ConstructorContainer.vue";
 import GrandPrixContainer from "@/components/container/GrandPrixContainer.vue";
 import OverlayContainer from "@/components/overlay/OverlayContainer.vue";
 import TeamDisplay from "@/components/display/TeamDisplay.vue";
 import RecommendedTeamsContainer from "@/components/container/RecommendedTeamsContainer.vue";
 import LoadingBar from "@/components/common/LoadingBar.vue";
+import {LoadingMessage, OverlayData} from "@/utils/classes";
+import {isGrandPrix} from "@/utils/common";
 
 export default {
   name: 'App',
   async created() {
-    this.loadingMessage = await this.fetchDrivers();
+    this.loadingMessage = await this.$store.dispatch('fetchDrivers');
     if (this.allDrivers.length === 0) return;
-    this.loadingMessage = await this.fetchConstructors();
+    this.loadingMessage = await this.$store.dispatch('fetchConstructors');
     if (this.allConstructors.length === 0) return;
-    this.loadingMessage = await this.fetchCircuits();
+    this.loadingMessage = await this.$store.dispatch('fetchCircuits');
     if (this.allCircuits.length === 0) return;
-    this.loadingMessage = await this.fetchGrandsPrix();
+    this.loadingMessage = await this.$store.dispatch('fetchGrandsPrix');
     if (this.allGrandsPrix.length === 0) return;
-    this.loadingMessage = await this.fetchUserTeams();
+    this.loadingMessage = await this.$store.dispatch('fetchUserTeams');
     if (this.userTeams.length === 0) return;
-
-    this.appLoading = false;
+    console.log('All Data Loaded Successfully!');
   },
   data() {
     return {
       grandPrixStartIndex: -1,
-      overlayArray: [],
-      overlayIndex: 0,
-      overlayType: '',
-      overlayObject: {},
+      overlayData: {
+        overlayArray: [],
+        overlayObject: {},
+        overlayType: ''
+      },
       showOverlay: false,
-      appLoading: true,
-      loadingMessage: {title: 'Loading', message: 'Loading Data...', success: true, stage: 0.5, maxStage: 5},
+      loadingMessage: new LoadingMessage(0, 5, 'Loading', 'Loading Data..', true),
       currentTeam: {},
+      grandPrix: {}
     }
   },
   watch: {
@@ -87,41 +88,36 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchDrivers', 'fetchConstructors', 'fetchCircuits', 'fetchGrandsPrix', 'fetchUserTeams']),
     showGraph(target) {
-      this.overlayObject = target;
-      this.overlayType = 'ShowGraph';
+      this.overlayData = new OverlayData(target, [], isGrandPrix(target) ? 'ShowGrandPrixResults' : 'ShowGraph');
+
+      this.showOverlay = true;
+    },
+    addObject(array) {
+      this.overlayData = new OverlayData(null, array, 'AddObject');
 
       this.showOverlay = true;
     },
     editObject(target, array) {
-      for (let i = 0; i < array.length; i++) {
-        if (array[i] === target) {
-          this.overlayIndex = i;
-          break;
-        }
-      }
-      this.overlayArray = array;
-      this.overlayType = 'EditObject';
+      this.overlayData = new OverlayData(target, array, 'EditObject');
 
       this.showOverlay = true;
     },
     editArray(array) {
-      this.overlayArray = array;
-      this.overlayType = 'EditArray';
+      this.overlayData = new OverlayData(null, array, 'EditArray');
 
       this.showOverlay = true;
     },
     closeOverlay() {
       this.showOverlay = false;
 
-      this.overlayArray = [];
-      this.overlayObject = {};
-      this.overlayIndex = 0;
-      this.overlayType = '';
+      this.overlayData = new OverlayData(null, [], '');
     },
     updateComparativeTeam(comparativeTeam) {
       this.currentTeam = comparativeTeam;
+    },
+    updateGrandPrix(grandPrix) {
+      this.grandPrix = grandPrix;
     }
   },
   computed: {
@@ -141,10 +137,26 @@ export default {
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Montserrat, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="datetime-local"] {
+  text-align: right;
+  -webkit-appearance: none; /* For WebKit-based browsers (Chrome, Safari, Edge) */
+  appearance: none; /* For modern browsers */
 }
 
 .hover-parent:hover .hover-child {

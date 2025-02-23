@@ -31,6 +31,11 @@ export default {
       default: '',
       type: String,
       required: false,
+    },
+    placeholder: {
+      default: '',
+      type: String,
+      required: false,
     }
   },
   computed: {
@@ -46,11 +51,11 @@ export default {
 </script>
 
 <template>
-  <div class="tw-flex">
-    <div class="">{{ name }}</div>
-    <input :id="getId" :type="type" :value="defaultValue"
-           :step="step" :class="`${type === 'text' ? 'tw-w-52' : 'tw-w-16'}`"
-           class="tw-ml-auto tw-border-1 tw-border-primary-light tw-rounded tw-bg-primary-light tw-bg-opacity-5 tw-text-f1-white tw-text-center">
+  <div class="tw-flex tw-gap-4">
+    <div class="tw-mt-0.5">{{ name }}</div>
+    <input :id="getId" :type="type" :value="defaultValue" :placeholder="placeholder"
+           :step="step" :class="[`${type === 'number' ? 'tw-w-16 tw-text-center' : 'tw-w-52 tw-text-left'}`]"
+           class="tw-ml-auto tw-px-2 tw-border-b-1 tw-border-l-1 tw-rounded-bl tw-border-primary-light tw-bg-primary-light tw-bg-opacity-25 tw-text-f1-white">
   </div>
 </template>
 

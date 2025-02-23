@@ -48,24 +48,21 @@ export default {
         {{ collapsed ? constructor.shortName : constructor.fullName }}
       </div>
       <div class="tw-ml-auto tw-relative">
-        <div :class="`${collapsed ? 'tw-text-xs' : 'not-hover-child'}`"
-             class="tw-text-right tw-mt-0.5 tw-absolute tw-w-full tw-h-full tw-flex tw-justify-end tw-items-center">
+        <div :class="`${collapsed ? 'tw-text-xs' : ''}`"
+             class="not-hover-child tw-text-right tw-mt-0.5 tw-absolute tw-w-full tw-h-full tw-flex tw-justify-end tw-items-center">
           <div class="tw-mr-0.5">{{ constructor.fantasyPoints }}</div>
         </div>
-        <div v-if="!collapsed" class="hover-child tw-transition-opacity tw-absolute tw-w-full tw-h-full tw-flex tw-gap-1 tw-items-center tw-justify-end">
-          <div v-if="constructor.raceResults" title="Show Constructor Graph">
+        <div class="hover-child tw-transition-opacity tw-absolute tw-w-full tw-h-full tw-flex tw-gap-1 tw-items-center tw-justify-end">
+          <div v-if="constructor.results" title="Show Constructor Graph">
             <span @click="graph()" class="material-symbols-outlined tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-text-xl">bar_chart</span>
-          </div>
-          <div title="Edit Constructor">
-            <span @click="edit()" class="material-symbols-outlined tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-text-xl">tune</span>
           </div>
         </div>
       </div>
     </div>
     <div class="tw-bg-primary-dark tw-rounded-b tw-w-full tw-h-full tw-flex tw-items-center tw-pl-2 tw-pr-1">
-      <div class="tw-h-full tw-w-1/2 tw-text-left tw-text-xs tw-flex tw-flex-col tw-place-content-between tw-py-1">
+      <div v-if="constructor.drivers" class="tw-h-full tw-w-1/2 tw-text-left tw-text-xs tw-flex tw-flex-col tw-place-content-between tw-py-1">
         <div class="tw-w-full tw-flex tw-justify-between"
-             v-for="driverId in constructor.drivers.filter(id => getDriver(id).active).sort((a, b) => getDriver(b).points - getDriver(a).points)" :key="driverId">
+             v-for="driverId in constructor.drivers.filter(id => getDriver(id).active).sort((a, b) => getDriver(b).points - getDriver(a).points).slice(0, 2)" :key="driverId">
           <div>{{ collapsed ? getDriver(driverId).shortName : getDriver(driverId).fullName.split(' ')[1] }}</div>
           <div v-if="!collapsed">{{ getDriver(driverId).points }}</div>
         </div>

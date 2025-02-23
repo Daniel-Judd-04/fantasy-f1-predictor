@@ -1,15 +1,13 @@
 package com.danieljudd.formula1.fantasyf1predictor.repository;
 
 import com.danieljudd.formula1.fantasyf1predictor.model.GrandPrix;
-import java.util.List;
+import java.time.Instant;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GrandPrixRepository extends JpaRepository<GrandPrix, Long> {
 
   GrandPrix findByGrandPrixId(int circuitId);
-
-  List<GrandPrix> findBySeason(int season);
-
-  GrandPrix findBySeasonAndRound(int season, byte round);
+  
+  GrandPrix findByStartTime(Instant startTime);
 
 }

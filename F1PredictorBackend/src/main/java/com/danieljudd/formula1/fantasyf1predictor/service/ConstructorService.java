@@ -52,4 +52,15 @@ public class ConstructorService {
     System.out.println("Adding constructor: " + constructor);
     return constructorRepository.save(constructor);
   }
+
+  public boolean deleteConstructor(int id) {
+    if (constructorRepository.findByConstructorId(id) == null) {
+      throw new IllegalArgumentException("Constructor with id=" + id + " not found");
+    } else if (id <= 10) {
+      throw new IllegalArgumentException("Cannot delete constructor with id <= 10: id=" + id);
+    }
+
+    constructorRepository.deleteById(id);
+    return true;
+  }
 }

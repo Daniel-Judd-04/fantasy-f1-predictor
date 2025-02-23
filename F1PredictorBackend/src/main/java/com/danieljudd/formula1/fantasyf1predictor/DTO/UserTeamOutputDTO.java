@@ -8,24 +8,20 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
 @Getter
-public class TeamOutputDTO {
+@Setter
+public class UserTeamOutputDTO {
 
-  private String teamOwner;
-  private String teamName;
+  private int teamId;
 
-  private BigDecimal value;
+  private String owner;
+  private String name;
+  private BigDecimal remainingBudget;
   private byte freeTransfers;
-  private String activeChip;
 
   @JsonIdentityReference(alwaysAsId = true)
   private Set<Driver> drivers;
   @JsonIdentityReference(alwaysAsId = true)
   private Set<Constructor> constructors;
 
-  private float averageFantasyPoints;
-  private float averageRecentPoints;
-  private float averagePoints;
-  private float consistency;
 }

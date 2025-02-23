@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,19 +37,9 @@ public class DriverController {
     return driverRepository.count();
   }
 
-  @GetMapping("/id={id}")
-  public Driver getDriverById(@PathVariable Long id) {
-    return driverRepository.findById(id).orElse(null);
-  }
-
-  @GetMapping("/shortName={shortName}")
-  public Driver getDriverByShortName(@PathVariable String shortName) {
-    return driverRepository.findByShortName(shortName.toUpperCase());
-  }
-
   @PutMapping
-  public ResponseEntity<Driver> updateDriver(@RequestBody Driver driver) {
-    Driver updatedDriver = driverService.updateDriver(driver);
+  public ResponseEntity<Driver> updateDriver(@RequestBody DriverDTO driverDTO) {
+    Driver updatedDriver = driverService.updateDriver(driverDTO);
     return ResponseEntity.ok(updatedDriver);
   }
 
@@ -56,5 +47,14 @@ public class DriverController {
   public ResponseEntity<Driver> addDriver(@RequestBody DriverDTO driverDTO) {
     Driver newDriver = driverService.addDriver(driverDTO);
     return new ResponseEntity<>(newDriver, HttpStatus.CREATED);
+  }
+
+  @DeleteMapping("/id={id}")
+  public ResponseEntity<String> deleteDriver(@PathVariable int id) {
+    if (driverService.deleteDriver(id)) {
+      return new ResponseEntity<>("Driver deleted", HttpStatus.OK);
+    }
+    return new ResponseEntity<>("Error deleting driver with id: " + id,
+        HttpStatus.BAD_REQUEST);
   }
 }

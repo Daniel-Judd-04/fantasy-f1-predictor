@@ -1,5 +1,5 @@
 import {createStore} from 'vuex';
-import {sort} from "@/utils/common";
+import {getConstructor, getDriver, sort} from "@/utils/common";
 
 const maxStage = 5;
 const baseUrl = 'http://localhost:8081/api/';
@@ -32,12 +32,51 @@ export default createStore({
         setRecommendedTeams(state, recommendedTeams) {
             state.recommendedTeams = recommendedTeams;
         },
-        addDriver(state, driver) {
-            state.drivers.push(driver);
+        updateDrivers(state, driver) {
+            const index = state.drivers.findIndex(d => d.driverId === driver.driverId);
+            if (index !== -1) {
+                state.drivers[index] = driver;
+            }
         },
-        addConstructor(state, constructor) {
-            state.constructors.push(constructor);
+        updateConstructors(state, constructor) {
+            const index = state.constructors.findIndex(c => c.constructorId === constructor.constructorId);
+            if (index !== -1) {
+                state.constructors[index] = constructor;
+            }
         },
+        updateCircuits(state, circuit) {
+            const index = state.circuits.findIndex(c => c.circuitId === circuit.circuitId);
+            if (index !== -1) {
+                state.circuits[index] = circuit;
+            }
+        },
+        updateGrandsPrix(state, grandPrix) {
+            const index = state.grandsPrix.findIndex(gp => gp.grandPrixId === grandPrix.grandPrixId);
+            if (index !== -1) {
+                state.grandsPrix[index] = grandPrix;
+            }
+        },
+        updateUserTeams(state, userTeam) {
+            const index = state.userTeams.findIndex(t => t.name === userTeam.name && t.owner === userTeam.owner);
+            if (index !== -1) {
+                state.userTeams[index] = userTeam;
+            }
+        },
+        deleteDrivers(state, driver) {
+            state.drivers = state.drivers.filter(d => d.driverId !== driver.id);
+        },
+        deleteConstructors(state, constructor) {
+            state.constructors = state.constructors.filter(c => c.constructorId !== constructor.id);
+        },
+        deleteCircuits(state, circuit) {
+            state.circuits = state.circuits.filter(c => c.circuitId !== circuit.id);
+        },
+        deleteGrandsPrix(state, grandPrix) {
+            state.grandsPrix = state.grandsPrix.filter(gp => gp.grandPrixId !== grandPrix.id);
+        },
+        deleteUserTeams(state, userTeam) {
+            state.userTeams = state.userTeams.filter(t => t.name !== userTeam.name && t.owner !== userTeam.owner);
+        }
     },
     actions: {
         async fetchDrivers({commit}) {
@@ -47,7 +86,7 @@ export default createStore({
                 let drivers = await response.json();
 
                 // Sort drivers by points in descending order
-                drivers = drivers.sort((a, b) => b.fantasyPoints - a.fantasyPoints);
+                sort(drivers, 'Fantasy Points');
 
                 commit('setDrivers', drivers);
                 console.log("Drivers:", drivers);
@@ -75,7 +114,7 @@ export default createStore({
                 let constructors = await response.json();
 
                 // Use saved setting in the future
-                sort(constructors, 'fantasyPoints');
+                sort(constructors, 'Fantasy Points');
 
                 commit('setConstructors', constructors);
                 console.log("Constructors:", constructors);
@@ -127,6 +166,8 @@ export default createStore({
                 if (!response.ok) throw new Error("Failed to fetch grands prix");
                 let grandsPrix = await response.json();
 
+                grandsPrix = grandsPrix.sort((a, b) => a.round - b.round).sort((a, b) => a.season - b.season);
+
                 commit('setGrandsPrix', grandsPrix);
                 console.log("Grands Prix:", grandsPrix);
                 return {
@@ -148,9 +189,14 @@ export default createStore({
         },
         async fetchUserTeams({commit}) {
             try {
-                const response = await fetch(`${baseUrl}teams/user`);
+                const response = await fetch(`${baseUrl}user-teams`);
                 if (!response.ok) throw new Error("Failed to fetch user teams");
                 let userTeams = await response.json();
+
+                for (const team of userTeams) {
+                    team.drivers = Array.from(team.drivers).sort((a, b) => getDriver(b).fantasyPoints - getDriver(a).fantasyPoints);
+                    team.constructors = Array.from(team.constructors).sort((a, b) => getConstructor(b).fantasyPoints - getConstructor(a).fantasyPoints);
+                }
 
                 commit('setUserTeams', userTeams);
                 console.log("User Teams:", userTeams);
@@ -171,86 +217,85 @@ export default createStore({
                 };
             }
         },
-        async setRecommendedTeams({commit}, teams) {
-            commit('setRecommendedTeams', teams);
-        },
-        // eslint-disable-next-line no-unused-vars
-        async update({commit}, object) {
+        async fetchRecommendedTeams({commit}, data) {
             try {
-                let objectType = '';
-                if (object.constructorId) {
-                    objectType = 'constructor';
-                } else if (object.driverId) {
-                    objectType = 'driver';
-                } else {
-                    throw new Error('Object type not recognized');
-                }
+                commit('setRecommendedTeams', []);
+                console.log(data);
+                const response = await fetch(`${baseUrl}recommended-teams/${data.limit}/${data.chips}/${data.teamId}/${data.grandPrixId}`);
+                if (!response.ok) throw new Error("Failed to fetch recommended teams");
+                let teams = await response.json();
 
-                const body = {
-                    fullName: object.fullName,
-                    country: object.country,
-                    fantasyPoints: object.fantasyPoints,
-                    fantasyPrice: object.fantasyPrice,
-                    active: object.active,
-                };
-                if (objectType === 'driver') {
-                    body.driverId = object.driverId;
-                    body.points = object.points;
-                } else if (objectType === 'constructor') {
-                    body.constructorId = object.constructorId;
-                }
-                const response = await fetch(`${baseUrl}${objectType}s`, {
+                commit('setRecommendedTeams', teams);
+                console.log("Recommended Teams:", teams);
+                return true;
+            } catch (error) {
+                console.error("Error fetching recommended teams", error);
+            }
+            return false;
+        },
+        async update({commit}, object) {
+            const objectType = object.objectType;
+            delete object.objectType;
+            try {
+                const response = await fetch(`${baseUrl}${objectType}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(body),
+                    body: JSON.stringify(object),
                 });
                 if (response.ok) {
-                    console.log("Updated " + object.fullName);
+                    console.log("Updated " + object.fullName, response);
+                    commit(`update${objectType.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('')}`, object);
                     return true;
                 }
             } catch (error) {
                 console.error(error);
             }
-            console.warn("Failed to update: " + object.fullName);
+            console.warn(`Failed to update ${objectType}: ${object.fullName}`);
             return false;
-        },
+        }
+        ,
         // eslint-disable-next-line no-unused-vars
         async add({commit}, object) {
-            const objectType = object.constructorId ? 'driver' : 'constructor';
+            const objectType = object.objectType;
+            delete object.objectType;
             try {
-                const body = {
-                    fullName: object.fullName,
-                    shortName: object.shortName,
-                    country: object.country,
-                    fantasyPrice: object.fantasyPrice,
-                    active: object.active,
-                };
-                if (objectType === 'driver') {
-                    body.constructorId = object.constructorId;
-                    body.carNumber = object.carNumber;
-                }
-                const response = await fetch(`${baseUrl}${objectType}s`, {
+                console.log("Adding " + object);
+                const response = await fetch(`${baseUrl}${objectType}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(body),
+                    body: JSON.stringify(object),
                 });
                 if (response.ok) {
                     console.log("Added " + object.fullName, response);
-                    if (objectType === 'driver') {
-                        commit('addDriver', await response.json());
-                    } else if (objectType === 'constructor') {
-                        commit('addConstructor', await response.json());
-                    }
                     return true;
                 }
             } catch (error) {
                 console.error(error);
             }
-            console.warn("Failed to add " + objectType + ": " + object.fullName);
+            console.warn(`Failed to add ${objectType}: ${object.fullName}`);
+            return false;
+        }
+        ,
+        async delete({commit}, object) {
+            const objectType = object.objectType;
+            delete object.objectType;
+            try {
+                const response = await fetch(`${baseUrl}${objectType}/id=${object.id}`, {
+                    method: 'DELETE',
+                });
+                if (response.ok) {
+                    console.log(`Deleted ${objectType}: ${object.id}` + object, response);
+                    commit(`delete${objectType.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('')}`, object);
+                    return true;
+                }
+            } catch (error) {
+                console.error(error);
+            }
+            console.warn(`Failed to delete ${objectType}: ${object.id}`);
             return false;
         }
     },
@@ -265,7 +310,7 @@ export default createStore({
             return state.circuits;
         },
         allGrandsPrix(state) {
-            return state.grandsPrix;
+            return state.grandsPrix
         },
         userTeams(state) {
             return state.userTeams;
