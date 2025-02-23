@@ -231,3 +231,5 @@ dist/
 npm-debug.log
 yarn-error.log
 
+**/fastf1_cache/
+
