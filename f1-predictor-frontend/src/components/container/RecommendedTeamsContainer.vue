@@ -262,9 +262,10 @@ export default {
     </div>
     <div v-if="comparativeTeam" class="tw-flex tw-flex-col tw-gap-2 tw-justify-between tw-p-2 tw-h-full tw-bg-primary-dark tw-rounded-b-lg tw-text-f1-white">
       <div v-if="recommendedTeams.length === 0" class="tw-relative tw-h-full tw-flex tw-items-center tw-justify-center">
-        <div v-if="loading" class="tw-flex tw-flex-col tw-text-xl">
+        <div v-if="loading" class="tw-flex tw-flex-col tw-items-center tw-text-xl">
           <div>Generating teams...</div>
           <div class="tw-text-primary-light tw-text-lg">Analysing over {{ animator.currentValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} teams</div>
+          <div class="loading tw-h-[2px] tw-w-1/2 tw-bg-primary-light tw-rounded-full"/>
         </div>
         <div v-else @click="loadRecommendedTeams" class="glow-button tw-p-[1px] tw-cursor-pointer tw-rounded-full">
           <div
@@ -363,5 +364,21 @@ export default {
 
 .v-enter-from {
   opacity: 0;
+}
+
+.loading {
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
 </style>
